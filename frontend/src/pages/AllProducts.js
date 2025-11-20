@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import UploadProduct from '../components/UploadProduct'
 import AdminProductCard from '../components/AdminProductCard'
 
-const backendURL = "https://your-backend-url.onrender.com"; // <-- Replace with your Render backend URL
+const backendURL = "https://stem2-7.onrender.com"; // <-- Replace with your Render backend URL
 
 const AllProducts = () => {
   const [openUploadProduct, setOpenUploadProduct] = useState(false)
