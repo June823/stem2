@@ -42,6 +42,20 @@ app.use(cookieParser());
 // Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// ======= API ROUTES =======
+
+// Example: get all products (replace with real MongoDB model)
+const Product = require('./models/Product'); // assume you have a Product model
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await Product.find(); // fetch all products
+    res.json({ success: true, data: products });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
 // Payment route
 const paymentRoute = require('./routes/payment');
 app.use('/api/payment', paymentRoute);
@@ -53,7 +67,7 @@ app.use('/api', routes);
 // ============================
 // Serve React Frontend from build folder
 // ============================
-const frontendBuildPath = path.join(__dirname, 'build'); // <-- your build folder in backend
+const frontendBuildPath = path.join(__dirname, 'build');
 app.use(express.static(frontendBuildPath));
 
 // Fallback route for React Router
