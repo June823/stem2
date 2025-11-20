@@ -6,7 +6,7 @@ const AdminProductCard = ({ data, fetchData }) => {
       const confirmDelete = window.confirm(`Delete ${data.productName}?`)
       if (!confirmDelete) return
 
-      const response = await fetch(`https://your-backend-url.onrender.com/api/products/${data._id}`, {
+      const response = await fetch(`https://stem2-7.onrender.com/api/products/${data._id}`, {
         method: 'DELETE'
       })
 
