@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Connect to DB
+// Connect to MongoDB
 connectDB();
 
 // Allowed frontend origins
@@ -51,15 +51,12 @@ const routes = require('./routes');
 app.use('/api', routes);
 
 // ============================
-// Serve React Frontend
+// Serve React Frontend from build folder
 // ============================
-const frontendBuildPath = path.join(__dirname, 'build');
+const frontendBuildPath = path.join(__dirname, 'build'); // <-- your build folder in backend
 app.use(express.static(frontendBuildPath));
 
-/**
- * Fallback route for React (FIXED for Node v22)
- * This replaces app.get('*', ...) which now throws errors.
- */
+// Fallback route for React Router
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(frontendBuildPath, 'index.html'));
 });
