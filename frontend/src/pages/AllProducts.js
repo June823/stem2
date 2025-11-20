@@ -44,7 +44,10 @@ const AllProducts = () => {
             key={index + "allProduct"}
             data={{
               ...product,
-              image: `${backendURL}${product.image}` // ensures correct image URL
+              // pick the first image in the array or null
+              image: product.productImage && product.productImage.length > 0
+                ? `${backendURL}${product.productImage[0]}`
+                : null
             }}
             fetchData={fetchAllProduct}
           />
