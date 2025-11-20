@@ -45,7 +45,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // ======= API ROUTES =======
 
 // Example: get all products (replace with real MongoDB model)
-const Product = require('./models/Product'); // assume you have a Product model
+const Product = require('./models/productModel'); // assume you have a Product model
 app.get('/api/products', async (req, res) => {
   try {
     const products = await Product.find(); // fetch all products
