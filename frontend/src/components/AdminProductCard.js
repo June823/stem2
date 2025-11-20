@@ -1,27 +1,29 @@
-import React from 'react'
+import React from 'react';
+
+const backendURL = import.meta.env.VITE_API_URL;
 
 const AdminProductCard = ({ data, fetchData }) => {
   const handleDelete = async () => {
     try {
-      const confirmDelete = window.confirm(`Delete ${data.productName}?`)
-      if (!confirmDelete) return
+      const confirmDelete = window.confirm(`Delete ${data.productName}?`);
+      if (!confirmDelete) return;
 
-      const response = await fetch(`https://stem2-7.onrender.com/api/products/${data._id}`, {
-        method: 'DELETE'
-      })
+      const response = await fetch(`${backendURL}/api/products/${data._id}`, {
+        method: 'DELETE',
+      });
 
-      const result = await response.json()
+      const result = await response.json();
       if (result.success) {
-        alert('Product deleted successfully')
-        fetchData()
+        alert('Product deleted successfully');
+        fetchData();
       } else {
-        alert('Failed to delete product')
+        alert('Failed to delete product');
       }
     } catch (err) {
-      console.error(err)
-      alert('Error deleting product')
+      console.error(err);
+      alert('Error deleting product');
     }
-  }
+  };
 
   return (
     <div className='border p-3 rounded-md shadow-md w-52 flex flex-col items-center'>
@@ -39,7 +41,7 @@ const AdminProductCard = ({ data, fetchData }) => {
         Delete
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default AdminProductCard
+export default AdminProductCard;
