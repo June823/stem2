@@ -41,7 +41,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/product-details`, {
+        const response = await fetch(`https://stem2-7.onrender.com/api/product-details`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ productId: id }), // pass product ID to backend
