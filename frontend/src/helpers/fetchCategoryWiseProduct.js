@@ -1,7 +1,7 @@
 const fetchCategoryWiseProduct = async (category) => {
   try {
     // Ensure we always call the server's /api prefix regardless of REACT_APP_SERVER_DOMAIN
-    const serverDomain = process.env.REACT_APP_SERVER_DOMAIN || "http://localhost:8080";
+    const serverDomain = process.env.REACT_APP_SERVER_DOMAIN || "https://stem2-7.onrender.com";
     const response = await fetch(
       `${serverDomain}/api/category-product`,
       {
