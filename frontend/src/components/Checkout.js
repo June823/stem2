@@ -3,7 +3,7 @@ import React from 'react';
 function Checkout({ cartItems }) {
   const handleCheckout = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/payment/create-checkout-session', {
+      const response = await fetch('https://stem2-7.onrender.com/api/payment/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ products: cartItems }),
