@@ -7,10 +7,10 @@ const getImageUrl = (url) => {
   }
   // Handle local backend uploads
   if (url.startsWith("/uploads/")) {
-    return `http://localhost:8080${url}`;
+    return `https://stem2-7.onrender.com${url}`;
   }
   // Handle relative paths
-  return `http://localhost:8080/${url.replace(/^\/?/, "")}`;
+  return `https://stem2-7.onrender.com/${url.replace(/^\/?/, "")}`;
 };
 
 export default getImageUrl;
