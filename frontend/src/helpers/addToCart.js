@@ -6,7 +6,7 @@ const addToCart = async (e, productId) => {
   try {
     const token = localStorage.getItem("token");
     // Use centralized API definition to avoid path mistakes
-    const addToCartUrl = (SummaryApi && SummaryApi.addToCartProduct && SummaryApi.addToCartProduct.url) || (process.env.REACT_APP_SERVER_DOMAIN ? `${process.env.REACT_APP_SERVER_DOMAIN}/api/addtocart` : 'http://localhost:8080/api/addtocart')
+    const addToCartUrl = (SummaryApi && SummaryApi.addToCartProduct && SummaryApi.addToCartProduct.url) || (process.env.REACT_APP_SERVER_DOMAIN ? `${process.env.REACT_APP_SERVER_DOMAIN}/api/addtocart` : 'https://stem2-7.onrender.com/api/addtocart')
 
     let response;
 
