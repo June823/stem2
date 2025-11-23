@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser');
 
 dotenv.config();
 const app = express();
+
+// Render requires dynamic PORT
 const PORT = process.env.PORT || 8080;
 
 // Connect to MongoDB
@@ -14,25 +16,29 @@ connectDB();
 
 // Allowed frontend origins
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
+  process.env.FRONTEND_URL,   // Render frontend URL
+  'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
   'http://127.0.0.1:3000',
 ];
 
 // CORS setup
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      console.warn(`CORS blocked origin: ${origin}`);
-      return callback(new Error('CORS policy: origin not allowed'));
-    }
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Allow Postman / mobile apps
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.warn(`❌ CORS blocked origin: ${origin}`);
+        return callback(new Error('CORS policy: origin not allowed'));
+      }
+    },
+    credentials: true,
+  })
+);
 
 // Increase payload limits
 app.use(express.json({ limit: '10mb' }));
@@ -43,12 +49,12 @@ app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ======= API ROUTES =======
+const Product = require('./models/productModel');
 
-// Example: get all products (replace with real MongoDB model)
-const Product = require('./models/productModel'); // assume you have a Product model
+// Example route: Get all products
 app.get('/api/products', async (req, res) => {
   try {
-    const products = await Product.find(); // fetch all products
+    const products = await Product.find();
     res.json({ success: true, data: products });
   } catch (err) {
     console.error(err);
@@ -68,6 +74,7 @@ app.use('/api', routes);
 // Serve React Frontend from build folder
 // ============================
 const frontendBuildPath = path.join(__dirname, 'build');
+
 app.use(express.static(frontendBuildPath));
 
 // Fallback route for React Router
@@ -85,7 +92,7 @@ app.use((err, req, res, next) => {
     });
   }
   if (err) {
-    console.error('Server error:', err);
+    console.error('Server error:', err.message || err);
     return res.status(500).json({
       success: false,
       error: true,
