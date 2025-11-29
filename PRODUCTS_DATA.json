@@ -3,235 +3,231 @@
     "productName": "Traditional Basket 1",
     "category": "baskets",
     "price": 2500,
-    "productImage": ["/uploads/products/baskets/basket1.jpeg"],
+    "productImage": ["basket1.jpeg"],
     "description": "Beautiful handwoven traditional basket, perfect for storage and decoration."
   },
   {
     "productName": "Traditional Basket 2",
     "category": "baskets",
     "price": 2800,
-    "productImage": ["/uploads/products/baskets/basket2.jpeg"],
+    "productImage": ["basket2.jpeg"],
     "description": "Handcrafted basket with intricate weaving pattern."
   },
   {
     "productName": "Traditional Basket 3",
     "category": "baskets",
     "price": 3000,
-    "productImage": ["/uploads/products/baskets/basket3.jpeg"],
+    "productImage": ["basket3.jpeg"],
     "description": "Medium-sized woven basket, ideal for home use."
   },
   {
     "productName": "Traditional Basket 4",
     "category": "baskets",
     "price": 3200,
-    "productImage": ["/uploads/products/baskets/basket4.jpeg"],
+    "productImage": ["basket4.jpeg"],
     "description": "Large decorative basket perfect for storage solutions."
   },
   {
     "productName": "Traditional Basket 5",
     "category": "baskets",
     "price": 2700,
-    "productImage": ["/uploads/products/baskets/basket5.jpeg"],
+    "productImage": ["basket5.jpeg"],
     "description": "Small traditional basket, great for fruit storage."
   },
   {
     "productName": "Traditional Basket 6",
     "category": "baskets",
     "price": 2900,
-    "productImage": ["/uploads/products/baskets/basket6.jpeg"],
+    "productImage": ["basket6.jpeg"],
     "description": "Handwoven basket with natural materials."
   },
   {
     "productName": "Traditional Basket 7",
     "category": "baskets",
     "price": 3100,
-    "productImage": ["/uploads/products/baskets/basket7.jpeg"],
+    "productImage": ["basket7.jpeg"],
     "description": "Elegant basket design for modern homes."
   },
   {
     "productName": "Traditional Basket 8",
     "category": "baskets",
     "price": 2600,
-    "productImage": ["/uploads/products/baskets/basket8.jpeg"],
+    "productImage": ["basket8.jpeg"],
     "description": "Compact traditional basket, versatile and stylish."
   },
   {
     "productName": "Designer Handbag 1",
     "category": "handbags",
     "price": 4500,
-    "productImage": ["/uploads/products/handbags/handbg1.jpeg"],
+    "productImage": ["handbg1.jpeg"],
     "description": "Elegant designer handbag with modern styling."
   },
   {
     "productName": "Designer Handbag 2",
     "category": "handbags",
     "price": 4800,
-    "productImage": ["/uploads/products/handbags/hdbg2.jpeg"],
+    "productImage": ["hdbg2.jpeg"],
     "description": "Stylish handbag perfect for everyday use."
   },
   {
     "productName": "Designer Handbag 3",
     "category": "handbags",
     "price": 5200,
-    "productImage": ["/uploads/products/handbags/hdbg3.jpeg"],
+    "productImage": ["hdbg3.jpeg"],
     "description": "Premium quality handbag with spacious compartments."
   },
   {
     "productName": "Designer Handbag 4",
     "category": "handbags",
     "price": 4600,
-    "productImage": ["/uploads/products/handbags/hdbg4.jpeg"],
+    "productImage": ["hdbg4.jpeg"],
     "description": "Classic handbag design with durable materials."
   },
   {
     "productName": "Designer Handbag 5",
     "category": "handbags",
     "price": 4900,
-    "productImage": ["/uploads/products/handbags/hdbg5.jpeg"],
+    "productImage": ["hdbg5.jpeg"],
     "description": "Modern handbag with elegant finish."
   },
   {
     "productName": "Designer Handbag 6",
     "category": "handbags",
     "price": 5100,
-    "productImage": ["/uploads/products/handbags/hdbg6.jpeg"],
+    "productImage": ["hdbg6.jpeg"],
     "description": "Chic handbag design for the fashion-forward."
   },
   {
     "productName": "Designer Handbag 7",
     "category": "handbags",
     "price": 4700,
-    "productImage": ["/uploads/products/handbags/hdbg7.jpeg"],
+    "productImage": ["hdbg7.jpeg"],
     "description": "Versatile handbag suitable for various occasions."
   },
   {
     "productName": "Travel Handbag",
     "category": "handbags",
     "price": 5500,
-    "productImage": ["/uploads/products/handbags/bgpack1.jpeg"],
+    "productImage": ["bgpack1.jpeg"],
     "description": "Spacious travel handbag with multiple pockets."
   },
   {
     "productName": "Designer Bag 10",
     "category": "handbags",
     "price": 5000,
-    "productImage": ["/uploads/products/handbags/bg10.jpeg"],
+    "productImage": ["bg10.jpeg"],
     "description": "Stylish bag perfect for work or casual outings."
   },
   {
     "productName": "Designer Bag 11",
     "category": "handbags",
     "price": 5300,
-    "productImage": ["/uploads/products/handbags/bag11.jpeg"],
+    "productImage": ["bag11.jpeg"],
     "description": "Premium handbag with contemporary design."
   },
   {
     "productName": "Stylish Hat 1",
     "category": "hats",
     "price": 1800,
-    "productImage": ["/uploads/products/hats/hat1.jpeg"],
+    "productImage": ["hat1.jpeg"],
     "description": "Classic hat design perfect for sunny days."
   },
   {
     "productName": "Stylish Hat 2",
     "category": "hats",
     "price": 2000,
-    "productImage": ["/uploads/products/hats/hat2.jpeg"],
+    "productImage": ["hat2.jpeg"],
     "description": "Elegant hat with wide brim for maximum sun protection."
   },
   {
     "productName": "Stylish Hat 3",
     "category": "hats",
     "price": 1900,
-    "productImage": ["/uploads/products/hats/hat3.jpeg"],
+    "productImage": ["hat3.jpeg"],
     "description": "Modern hat design with comfortable fit."
   },
   {
     "productName": "Stylish Hat 4",
     "category": "hats",
     "price": 2100,
-    "productImage": ["/uploads/products/hats/hat4.jpeg"],
+    "productImage": ["hat4.jpeg"],
     "description": "Fashionable hat perfect for outdoor activities."
   },
   {
     "productName": "Stylish Hat 5",
     "category": "hats",
     "price": 1950,
-    "productImage": ["/uploads/products/hats/hat5.jpeg"],
+    "productImage": ["hat5.jpeg"],
     "description": "Versatile hat suitable for various occasions."
   },
   {
     "productName": "Stylish Hat 6",
     "category": "hats",
     "price": 2050,
-    "productImage": ["/uploads/products/hats/hat6.jpeg"],
+    "productImage": ["hat6.jpeg"],
     "description": "Trendy hat design with premium materials."
   },
   {
     "productName": "Traditional Mat 1",
     "category": "mats",
     "price": 1500,
-    "productImage": ["/uploads/products/mats/mat1.jpeg"],
+    "productImage": ["mat1.jpeg"],
     "description": "Handwoven traditional mat, perfect for home decoration."
   },
   {
     "productName": "Traditional Mat 2",
     "category": "mats",
     "price": 1700,
-    "productImage": ["/uploads/products/mats/mat2.jpeg"],
+    "productImage": ["mat2.jpeg"],
     "description": "Durable mat with beautiful patterns."
   },
   {
     "productName": "Traditional Mat 3",
     "category": "mats",
     "price": 1600,
-    "productImage": ["/uploads/products/mats/mat3.jpeg"],
+    "productImage": ["mat3.jpeg"],
     "description": "Elegant mat design for modern interiors."
   },
   {
     "productName": "Traditional Mat 4",
     "category": "mats",
     "price": 1800,
-    "productImage": ["/uploads/products/mats/mat4.jpeg"],
+    "productImage": ["mat4.jpeg"],
     "description": "Handcrafted mat with traditional weaving."
   },
   {
     "productName": "Traditional Mat 5",
     "category": "mats",
     "price": 1750,
-    "productImage": ["/uploads/products/mats/mat5.jpeg"],
+    "productImage": ["mat5.jpeg"],
     "description": "Premium quality mat perfect for any room."
   },
   {
     "productName": "Comfortable Sandals 1",
     "category": "sandals",
     "price": 2200,
-    "productImage": ["/uploads/products/sandals/sandals1.jpeg"],
+    "productImage": ["sandals1.jpeg"],
     "description": "Comfortable leather sandals perfect for everyday wear."
   },
   {
     "productName": "Comfortable Sandals 2",
     "category": "sandals",
     "price": 2400,
-    "productImage": ["/uploads/products/sandals/sandals2.jpeg"],
+    "productImage": ["sandals2.jpeg"],
     "description": "Stylish sandals with excellent comfort and support."
   },
   {
     "productName": "Comfortable Sandals 3",
     "category": "sandals",
     "price": 2300,
-    "productImage": ["/uploads/products/sandals/sandals3.jpeg"],
+    "productImage": ["sandals3.jpeg"],
     "description": "Durable sandals ideal for casual occasions."
   },
   {
     "productName": "Comfortable Sandals 4",
     "category": "sandals",
     "price": 2500,
-    "productImage": ["/uploads/products/sandals/sandals4.jpeg"],
+    "productImage": ["sandals4.jpeg"],
     "description": "Premium sandals with ergonomic design."
   }
 ]
-
-
-
-
