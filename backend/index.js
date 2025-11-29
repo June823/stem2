@@ -1,83 +1,42 @@
 const express = require("express");
 const path = require("path");
-const connectDB = require("./config/db");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const connectDB = require("./config/db");
 
 dotenv.config();
-const app = express();
-
-// ================== PORT ===================
-const PORT = process.env.PORT || 8080;
-
-// ================== DB =====================
 connectDB();
 
-// ================== CORS ===================
-const allowedOrigins = [
-  process.env.FRONTEND_URL,        // Render frontend
-  "https://stem2-8.onrender.com",  // If frontend served from backend
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "http://127.0.0.1:3000"
-];
+const app = express();
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Allow Postman, mobile apps
+// Middlewares
+app.use(cors({
+  origin: "*",
+  credentials: true
+}));
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn("❌ CORS Blocked Origin:", origin);
-        callback(new Error("CORS policy: Origin not allowed"));
-      }
-    },
-    credentials: true,
-  })
-);
-
-// ================== PARSERS ==================
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ limit: "10mb", extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 
-// ================== STATIC UPLOADS ===========
+// 📌 Serve uploaded product images
+// This makes images accessible at:
+// https://stem2-8.onrender.com/uploads/products/xxxx.jpeg
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Ensure uploads folder exists (Render deletes empty folders)
-const fs = require("fs");
-const uploadsPath = path.join(__dirname, "uploads", "products");
-if (!fs.existsSync(uploadsPath)) {
-  fs.mkdirSync(uploadsPath, { recursive: true });
-}
+// Routes
+app.use("/api/products", require("./routes/productRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/orders", require("./routes/orderRoutes"));
 
-// ================== API ROUTES ================
-app.use("/api/upload", require("./routes/upload"));  // <--- Upload route
-app.use("/api/payment", require("./routes/payment"));
-app.use("/api", require("./routes")); // must be last API route
+// 📌 Serve frontend build on Render
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-// ================== FRONTEND ================
-const frontendBuild = path.join(__dirname, "build");
-app.use(express.static(frontendBuild));
-
-// React Router fallback
 app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendBuild, "index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
-// ================== ERROR HANDLER =============
-app.use((err, req, res, next) => {
-  console.error("🔥 Server Error:", err.message);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Server Error",
-  });
-});
-
-// ================== START =====================
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
