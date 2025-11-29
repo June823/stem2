@@ -1,108 +1,74 @@
-const express = require('express');
-const path = require('path');
-const connectDB = require('./config/db');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+const express = require("express");
+const path = require("path");
+const connectDB = require("./config/db");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 const app = express();
 
-// Render requires dynamic PORT
+// Render dynamic port
 const PORT = process.env.PORT || 8080;
 
-// Connect to MongoDB
+// DB connect
 connectDB();
 
-// Allowed frontend origins
+// Allowed CORS origins
 const allowedOrigins = [
-  process.env.FRONTEND_URL,   // Render frontend URL
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'http://127.0.0.1:3000',
+  process.env.FRONTEND_URL,  // MUST be set in Render env
+  "https://stem2-8.onrender.com", // (if serving frontend from backend)
+  "http://localhost:3000",
+  "http://localhost:3001",
 ];
 
-// CORS setup
+// CORS
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Allow Postman / mobile apps
+      if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
+        callback(null, true);
       } else {
-        console.warn(`❌ CORS blocked origin: ${origin}`);
-        return callback(new Error('CORS policy: origin not allowed'));
+        console.warn("❌ CORS blocked:", origin);
+        callback(new Error("CORS blocked"));
       }
     },
     credentials: true,
   })
 );
 
-// Increase payload limits
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Body limits
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 
-// Serve uploaded images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve images
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ======= API ROUTES =======
-const Product = require('./models/productModel');
+// ================= API ROUTES =================
+app.use("/api", require("./routes"));
+app.use("/api/payment", require("./routes/payment"));
 
-// Example route: Get all products
-app.get('/api/products', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json({ success: true, data: products });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
+// ================= FRONTEND BUILD ===============
+const frontendBuild = path.join(__dirname, "build");
+app.use(express.static(frontendBuild));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendBuild, "index.html"));
 });
 
-// Payment route
-const paymentRoute = require('./routes/payment');
-app.use('/api/payment', paymentRoute);
-
-// Other API routes
-const routes = require('./routes');
-app.use('/api', routes);
-
-// ============================
-// Serve React Frontend from build folder
-// ============================
-const frontendBuildPath = path.join(__dirname, 'build');
-
-app.use(express.static(frontendBuildPath));
-
-// Fallback route for React Router
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(frontendBuildPath, 'index.html'));
-});
-
-// Error handler
+// ================ ERROR HANDLER =================
 app.use((err, req, res, next) => {
-  if (err && (err.type === 'entity.too.large' || err.status === 413)) {
-    return res.status(413).json({
-      success: false,
-      error: true,
-      message: 'Payload too large. Reduce payload size.',
-    });
-  }
-  if (err) {
-    console.error('Server error:', err.message || err);
-    return res.status(500).json({
-      success: false,
-      error: true,
-      message: err.message || 'Server error',
-    });
-  }
-  next();
+  console.error("Server Error:", err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server error",
+  });
 });
 
-// Start server
+// ================= START SERVER =================
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🚀 Server running on ${PORT}`);
 });
