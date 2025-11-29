@@ -1,16 +1,21 @@
 // src/helpers/getImageUrl.js
+
 const getImageUrl = (url) => {
-  if (!url) return ""; // No image
-  // Handle Cloudinary URLs (https://) or any full URL (http:// or https://)
+  if (!url) return "";
+
+  // If full http/https URL
   if (url.startsWith("http://") || url.startsWith("https://")) {
     return url;
   }
-  // Handle local backend uploads
-  if (url.startsWith("/uploads/")) {
-    return `https://stem2-7.onrender.com${url}`;
-  }
-  // Handle relative paths
-  return `https://stem2-7.onrender.com/${url.replace(/^\/?/, "")}`;
+
+  // Normalize image name (remove leading slash)
+  url = url.replace(/^\/+/, "");
+
+  // Render backend base URL
+  const BASE = "https://stem2-8.onrender.com";
+
+  // If image comes from uploads folder (backend)
+  return `${BASE}/uploads/${url}`;
 };
 
 export default getImageUrl;
