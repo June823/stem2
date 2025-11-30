@@ -20,15 +20,15 @@ app.use(express.json());
 app.use(cookieParser());
 
 // 📌 Serve uploaded product images
-// This makes images accessible at:
-// https://stem2-8.onrender.com/uploads/products/xxxx.jpeg
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+// ✅ ROUTES — KEEP ONLY WHAT EXISTS
 app.use("/api/products", require("./routes/productRoutes"));
-app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/orders", require("./routes/orderRoutes"));
+
+// ❌ REMOVE routes that don't exist (to stop Render errors)
+// app.use("/api/users", require("./routes/userRoutes"));
+// app.use("/api/auth", require("./routes/authRoutes"));
+// app.use("/api/orders", require("./routes/orderRoutes"));
 
 // 📌 Serve frontend build on Render
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
