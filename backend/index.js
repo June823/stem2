@@ -21,8 +21,8 @@ app.get("/api/hello", (req, res) => {
 const frontendPath = path.join(__dirname, "client", "build");
 app.use(express.static(frontendPath));
 
-// Catch-all route (fixed)
-app.get("/:path*", (req, res) => {
+// **Catch-all route for React (works with any version)**
+app.use((req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
