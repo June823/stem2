@@ -5,32 +5,30 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 
+// Load environment variables
 dotenv.config();
+
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
 // Middlewares
 app.use(cors({
-  origin: "*",
+  origin: "*", // adjust if you want to restrict to frontend domain
   credentials: true
 }));
-
 app.use(express.json());
 app.use(cookieParser());
 
-// 📌 Serve uploaded product images
+// Serve uploaded product images
+// Make sure your uploads folder exists
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ ROUTES — KEEP ONLY WHAT EXISTS
-app.use("/api/products", require("./routes/productRoutes"));
+// Use your existing routes
+app.use("/api", require("./routes/index.js"));
 
-// ❌ REMOVE routes that don't exist (to stop Render errors)
-// app.use("/api/users", require("./routes/userRoutes"));
-// app.use("/api/auth", require("./routes/authRoutes"));
-// app.use("/api/orders", require("./routes/orderRoutes"));
-
-// 📌 Serve frontend build on Render
+// Serve frontend build on Render
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 app.get("*", (req, res) => {
