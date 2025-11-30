@@ -1,39 +1,39 @@
+// backend/index.js
 const express = require("express");
-const path = require("path");
-const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const path = require("path");
+require("dotenv").config();
 const connectDB = require("./config/db");
-
-dotenv.config();
-connectDB();
+const routes = require("./routes");
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Middlewares
-app.use(cors({
-  origin: "*",
-  credentials: true,
-}));
+// Connect to MongoDB
+connectDB();
+
+// Middleware
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// 📌 Serve uploaded product images
+// API routes
+app.use("/api", routes);
+
+// Serve product images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
-app.use("/api", require("./routes/index.js"));
+// Serve frontend (React) - must come after API routes
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
 
-// 📌 Serve frontend build
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-// Catch-all route: redirect everything else to index.html
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+app.get("*", (req, res) => {
+  // For any route not starting with /api, serve React index.html
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // Start server
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
