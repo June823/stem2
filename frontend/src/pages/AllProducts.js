@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import UploadProduct from '../components/UploadProduct';
 import AdminProductCard from '../components/AdminProductCard';
 
-const backendURL = import.meta.env.VITE_API_URL;
+const backendURL = process.env.REACT_APP_API_URL;
 
 const AllProducts = () => {
   const [openUploadProduct, setOpenUploadProduct] = useState(false);
