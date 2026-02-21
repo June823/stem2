@@ -10,13 +10,9 @@ const AllProducts = () => {
 
   const fetchAllProduct = async () => {
     try {
-      // ✅ FIXED ENDPOINT
       const response = await fetch(`${backendURL}/api/get-product`);
       const dataResponse = await response.json();
 
-      console.log('Product data', dataResponse);
-
-      // Backend returns products inside "data"
       setAllProduct(dataResponse?.data || []);
     } catch (err) {
       console.error('Failed to fetch products:', err);
@@ -43,12 +39,12 @@ const AllProducts = () => {
       <div className='flex items-center flex-wrap gap-5 py-4 h-[calc(100vh-190px)] overflow-y-scroll'>
         {allProduct.map((product, index) => (
           <AdminProductCard
-            key={index + 'allProduct'}
+            key={product._id || index}
             data={{
               ...product,
               image:
                 product.productImage && product.productImage.length > 0
-                  ? `${backendURL}${product.productImage[0]}`
+                  ? product.productImage[0]   // ✅ DIRECT URL (Cloudinary)
                   : null,
             }}
             fetchData={fetchAllProduct}
