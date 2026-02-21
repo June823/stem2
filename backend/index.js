@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
@@ -18,16 +17,10 @@ app.get("/api/hello", (req, res) => {
   res.json({ message: "Hello from backend!" });
 });
 
-// Serve React frontend
-const frontendBuildPath = path.join(__dirname, "..", "frontend", "build");
-app.use(express.static(frontendBuildPath));
+// Add your other API routes here
+// Example:
+// app.use("/api/products", require("./routes/products"));
 
-// Catch-all route for React Router
-app.use((req, res) => {
-  res.sendFile(path.join(frontendBuildPath, "index.html"));
-});
-
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
