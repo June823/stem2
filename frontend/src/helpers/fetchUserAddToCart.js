@@ -2,24 +2,22 @@ import SummaryApi from "../common";
 
 const fetchUserAddToCart = async () => {
   try {
-    const token = localStorage.getItem('token')
-    const headers = {
-      "Content-Type": "application/json"
+    const response = await fetch(
+      SummaryApi.addToCartProductCount.url,
+      {
+        method: SummaryApi.addToCartProductCount.method,
+        credentials: "include", // IMPORTANT (sends cookie)
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // If not authorized (401), return default count
+    if (!response.ok) {
+      return { data: { count: 0 } };
     }
 
-    const fetchOptions = {
-      method: SummaryApi.addToCartProductCount.method,
-      headers
-    }
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`
-    } else {
-      // fall back to cookie-based auth
-      fetchOptions.credentials = 'include'
-    }
-
-    const response = await fetch(SummaryApi.addToCartProductCount.url, fetchOptions);
     const data = await response.json();
     return data;
   } catch (error) {
