@@ -7,19 +7,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Middleware
-app.use(cors());
+// ✅ FIXED CORS
+const allowedOrigins = [
+  "https://stem2-12.onrender.com"
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Example API route
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from backend!" });
-});
-
-// Add your other API routes here
-// Example:
-// app.use("/api/products", require("./routes/products"));
+// Routes go here
+// app.use("/api", require("./routes/yourRoutes"));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
