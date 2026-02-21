@@ -26,7 +26,7 @@ const Login = () => {
     try {
       const response = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
-        credentials: "include", // IMPORTANT
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -35,7 +35,6 @@ const Login = () => {
 
       const result = await response.json();
 
-      // If backend returns error (400, 401 etc.)
       if (!response.ok) {
         toast.error(result.message || "Login failed");
         return;
@@ -44,19 +43,12 @@ const Login = () => {
       if (result.success) {
         toast.success(result.message);
 
-        // Store token if returned
-        if (result.token) {
-          localStorage.setItem("token", result.token);
-        }
-
-        // Refresh user data
-        await fetchUserDetails();
+        // Refresh user
+        const user = await fetchUserDetails();
         fetchUserAddToCart();
 
-        // Redirect based on role
-        const user = await fetchUserDetails();
-
-        if (user && (user.role || "").toUpperCase() === "ADMIN") {
+        // Admin redirect
+        if (user?.role?.toLowerCase() === "admin") {
           navigate("/admin-panel");
         } else {
           navigate("/");
@@ -77,7 +69,6 @@ const Login = () => {
           </div>
 
           <form className="pt-6 flex flex-col gap-2" onSubmit={handleSubmit}>
-            {/* Email */}
             <div className="grid">
               <label>Email :</label>
               <div className="bg-slate-100 p-2">
@@ -93,7 +84,6 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Password */}
             <div>
               <label>Password :</label>
               <div className="bg-slate-100 p-2 flex">
@@ -113,16 +103,8 @@ const Login = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </div>
               </div>
-
-              <Link
-                to="/forgot-password"
-                className="block w-fit ml-auto hover:underline hover:text-red-600"
-              >
-                Forgot password?
-              </Link>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 w-full max-w-[150px] rounded-full mx-auto block mt-6"
@@ -130,16 +112,6 @@ const Login = () => {
               Login
             </button>
           </form>
-
-          <p className="my-5">
-            Don't have account?{" "}
-            <Link
-              to="/sign-up"
-              className="text-red-600 hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
         </div>
       </div>
     </section>
