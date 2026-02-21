@@ -4,7 +4,7 @@
   "main": "backend/index.js",
   "scripts": {
     "start": "node backend/index.js",
-    "postinstall": "cd frontend && npm install && npm run build"
+   
   },
   "dependencies": {
     "express": "^5.1.0",
