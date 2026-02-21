@@ -1,37 +1,37 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const connectDB = require("./config/connectDB"); // <-- IMPORTANT
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 8080;
 
-// ✅ CORS FIX (must match your frontend URL)
-const allowedOrigins = [
-  "https://stem2-12.onrender.com"
-];
+// 🔥 Connect to MongoDB FIRST
+connectDB();
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+// ✅ CORS Configuration
+app.use(
+  cors({
+    origin: "https://stem2-12.onrender.com",
+    credentials: true,
+  })
+);
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 🔥 IMPORTANT: Mount your main router here
-// Make sure this path matches your project structure
-const mainRouter = require("./routes/index"); 
-app.use("/api", mainRouter);
+// 🔥 Mount all API routes
+app.use("/api", require("./routes/index"));
 
-// Test route (optional)
+// Test route
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Backend is working!" });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
