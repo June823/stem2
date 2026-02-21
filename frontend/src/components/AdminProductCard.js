@@ -1,6 +1,6 @@
 import React from 'react';
 
-const backendURL = import.meta.env.VITE_API_URL;
+const backendURL = process.env.REACT_APP_API_URL;
 
 const AdminProductCard = ({ data, fetchData }) => {
   const handleDelete = async () => {
