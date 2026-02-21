@@ -10,11 +10,13 @@ const AllProducts = () => {
 
   const fetchAllProduct = async () => {
     try {
-      const response = await fetch(`${backendURL}/api/products`);
+      // ✅ FIXED ENDPOINT
+      const response = await fetch(`${backendURL}/api/get-product`);
       const dataResponse = await response.json();
 
       console.log('Product data', dataResponse);
 
+      // Backend returns products inside "data"
       setAllProduct(dataResponse?.data || []);
     } catch (err) {
       console.error('Failed to fetch products:', err);
@@ -37,14 +39,13 @@ const AllProducts = () => {
         </button>
       </div>
 
-      {/** Display all products */}
+      {/* Display all products */}
       <div className='flex items-center flex-wrap gap-5 py-4 h-[calc(100vh-190px)] overflow-y-scroll'>
         {allProduct.map((product, index) => (
           <AdminProductCard
             key={index + 'allProduct'}
             data={{
               ...product,
-              // pick the first image in the array or null
               image:
                 product.productImage && product.productImage.length > 0
                   ? `${backendURL}${product.productImage[0]}`
@@ -55,7 +56,7 @@ const AllProducts = () => {
         ))}
       </div>
 
-      {/** Upload product modal */}
+      {/* Upload product modal */}
       {openUploadProduct && (
         <UploadProduct
           onClose={() => setOpenUploadProduct(false)}
