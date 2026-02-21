@@ -27,7 +27,7 @@ const SummaryApi = {
     method: "POST",
   },
   categoryProduct: {
-    url: "https://stem2-7.onrender.com/api/get-categoryProduct",
+    url: "https://stem2-11.onrender.com/api/get-categoryProduct",
     method: "GET",
   },
   categoryWiseProduct: {
