@@ -25,7 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ VERY IMPORTANT: Serve static uploads folder
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 // ✅ Routes
 app.use("/api", require("./routes/index"));
