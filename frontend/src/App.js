@@ -9,7 +9,6 @@ import SummaryApi from './common';
 import Context from './context';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from './store/userSlice';
-import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const dispatch = useDispatch();
@@ -28,7 +27,9 @@ function App() {
       }
 
       const data = await response.json();
-      if (data.success) dispatch(setUserDetails(data.data));
+      if (data.success) {
+        dispatch(setUserDetails(data.data));
+      }
     } catch (err) {
       console.error('Error fetching user details:', err);
     }
@@ -38,7 +39,10 @@ function App() {
     try {
       const token = localStorage.getItem('token');
       const headers = { 'Content-Type': 'application/json' };
-      if (token) headers.Authorization = `Bearer ${token}`;
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       const response = await fetch(SummaryApi.addToCartProductCount.url, {
         method: SummaryApi.addToCartProductCount.method,
@@ -78,9 +82,7 @@ function App() {
       <ToastContainer position="top-center" />
       <Header />
       <main className="min-h-[calc(100vh-120px)] pt-16">
-        <ErrorBoundary>
-          <Outlet />
-        </ErrorBoundary>
+        <Outlet />
       </main>
       <Footer />
     </Context.Provider>
