@@ -35,12 +35,12 @@ async function userSignInController(req, res) {
       expiresIn: "8h",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production" ? true : false,
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-      maxAge: 8 * 60 * 60 * 1000,
-    });
+   res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,        // REQUIRED on Render (HTTPS)
+  sameSite: "none",    // REQUIRED for cross-domain
+  maxAge: 8 * 60 * 60 * 1000,
+});
 
     return res.status(200).json({
       message: "Login successful",
