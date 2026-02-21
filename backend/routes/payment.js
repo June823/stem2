@@ -28,8 +28,8 @@ router.post('/create-checkout-session', async (req, res) => {
       payment_method_types: ['card'],
       mode: 'payment',
       line_items: lineItems,
-      success_url: process.env.SUCCESS_URL || 'http://localhost:3002/success',
-      cancel_url: process.env.CANCEL_URL || 'http://localhost:3002/cancel',
+      success_url: process.env.SUCCESS_URL || 'https://stem2-12.onrender.com/success',
+      cancel_url: process.env.CANCEL_URL || 'https://stem2-12.onrender.com/cancel',
     });
 
     // Return session URL (new Stripe method)
