@@ -1,29 +1,28 @@
 import SummaryApi from "../common";
 
-const fetchUserAddToCart = async () => {
+const fetchUserDetails = async () => {
   try {
     const response = await fetch(
-      SummaryApi.addToCartProductCount.url,
+      SummaryApi.userDetails.url,
       {
-        method: SummaryApi.addToCartProductCount.method,
-        credentials: "include", // IMPORTANT (sends cookie)
+        method: SummaryApi.userDetails.method,
+        credentials: "include", // VERY IMPORTANT
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
 
-    // If not authorized (401), return default count
     if (!response.ok) {
-      return { data: { count: 0 } };
+      return null;
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
-    console.error("Error fetching cart count:", error);
-    return { data: { count: 0 } };
+    console.error("Error fetching user details:", error);
+    return null;
   }
 };
 
-export default fetchUserAddToCart;
+export default fetchUserDetails;
