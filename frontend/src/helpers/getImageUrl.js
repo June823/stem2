@@ -1,18 +1,19 @@
 const getImageUrl = (url) => {
-  if (!url) {
-    // Return a placeholder if no image exists
-    return "https://via.placeholder.com/200";
-  }
+  if (!url) return "https://via.placeholder.com/200";
 
-  // 1. If it's a full Cloudinary URL, return it as is
+  // If it's a full Cloudinary URL, use it
   if (url.startsWith("http")) {
     return url;
   }
 
-  // 2. If it's a local upload, point it to your Backend URL
-  // Replace the URL below with your actual Render Backend link
-  const backendURL = "https://your-backend-api.onrender.com"; 
-  return `${backendURL}/${url}`;
+  // 🔥 THE FIX: Point relative paths to your Backend
+  // Replace this with your ACTUAL Render Backend URL
+  const backendUrl = "https://your-backend-api.onrender.com"; 
+
+  // Remove leading slash if it exists to avoid double slashes //
+  const cleanPath = url.startsWith("/") ? url.slice(1) : url;
+
+  return `${backendUrl}/${cleanPath}`;
 };
 
 export default getImageUrl;
