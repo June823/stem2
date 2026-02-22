@@ -9,33 +9,51 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// ✅ Connect to MongoDB
+/* ================================
+   CONNECT TO DATABASE
+================================ */
 connectDB();
 
-// ✅ CORS
+/* ================================
+   CORS CONFIGURATION
+================================ */
 app.use(
   cors({
-    origin: "https://stem2-12.onrender.com",
+    origin: "https://stem2-12.onrender.com", // your frontend URL
     credentials: true,
   })
 );
 
-// ✅ Middleware
+/* ================================
+   MIDDLEWARE
+================================ */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ VERY IMPORTANT: Serve static uploads folder
+/* ================================
+   SERVE STATIC UPLOADS FOLDER
+   VERY IMPORTANT FOR IMAGES
+================================ */
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
 
-
-// ✅ Routes
+/* ================================
+   API ROUTES
+================================ */
 app.use("/api", require("./routes/index"));
 
-// Test route
+/* ================================
+   TEST ROUTE
+================================ */
 app.get("/api/hello", (req, res) => {
   res.json({ message: "Backend is working!" });
 });
 
-// Start server
+/* ================================
+   START SERVER
+================================ */
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
