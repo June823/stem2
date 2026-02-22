@@ -18,6 +18,8 @@ const VerticalCardProduct = ({ category, heading }) => {
   const scrollElement = useRef()
 
   const { fetchUserAddToCart, user } = useContext(Context)
+  
+  // ✅ Currency Formatter
   const displayKSh = (num) => `KSh ${Number(num || 0).toLocaleString()}`
 
   const fetchData = async () => {
@@ -29,15 +31,16 @@ const VerticalCardProduct = ({ category, heading }) => {
 
   useEffect(() => { fetchData() }, [category])
 
+  // ✅ FIXED DELETE LOGIC (Using productId)
   const handleDeleteProduct = async (e, id) => {
     e.preventDefault()
     e.stopPropagation()
-    if (window.confirm("Are you sure you want to delete this product?")) {
+    if (window.confirm("Delete this product?")) {
       const response = await fetch(SummaryApi.deleteProduct.url, {
         method: SummaryApi.deleteProduct.method,
         headers: { "content-type": "application/json" },
         credentials: 'include',
-        body: JSON.stringify({ _id: id })
+        body: JSON.stringify({ productId: id }) // 👈 Changed from _id to productId
       })
       const dataResponse = await response.json()
       if (dataResponse.success) {
@@ -63,11 +66,11 @@ const VerticalCardProduct = ({ category, heading }) => {
           <div key={product?._id} className='relative group'>
             {(user?.role === "ADMIN" || user?.role === "ADMINISTRATOR") && (
               <div className='absolute top-2 right-2 flex gap-2 z-20 hidden group-hover:flex'>
-                <div className='bg-green-600 text-white p-2 rounded-full cursor-pointer shadow-md' onClick={(e) => {
+                <div className='bg-green-600 text-white p-2 rounded-full cursor-pointer shadow-md hover:scale-110 transition-all' onClick={(e) => {
                   e.preventDefault(); e.stopPropagation();
                   setSelectedProduct(product); setEditProduct(true);
                 }}><MdModeEditOutline /></div>
-                <div className='bg-red-600 text-white p-2 rounded-full cursor-pointer shadow-md' onClick={(e) => handleDeleteProduct(e, product?._id)}><MdDelete /></div>
+                <div className='bg-red-600 text-white p-2 rounded-full cursor-pointer shadow-md hover:scale-110 transition-all' onClick={(e) => handleDeleteProduct(e, product?._id)}><MdDelete /></div>
               </div>
             )}
             <Link to={"/product/" + product?._id} className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] bg-white rounded-sm shadow block'>
