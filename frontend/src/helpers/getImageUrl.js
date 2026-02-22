@@ -3,19 +3,19 @@
 const getImageUrl = (url) => {
   if (!url) return "";
 
-  // If full http/https URL
+  // If already full URL, return it
   if (url.startsWith("http://") || url.startsWith("https://")) {
     return url;
   }
 
-  // Normalize image name (remove leading slash)
-  url = url.replace(/^\/+/, "");
+  // Remove leading slash if it exists
+  const cleanUrl = url.startsWith("/") ? url : `/${url}`;
 
-  // Render backend base URL
-  const BASE = "https://stem2-8.onrender.com";
+  // Your backend URL (CHANGE ONLY IF YOUR BACKEND CHANGES)
+  const BASE_URL = "https://stem2-11.onrender.com";
 
-  // If image comes from uploads folder (backend)
-  return `${BASE}/uploads/${url}`;
+  // Return full image URL
+  return `${BASE_URL}${cleanUrl}`;
 };
 
 export default getImageUrl;
