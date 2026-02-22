@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import loginIcons from "../assets/signin.gif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SummaryApi from "../common";
 import { toast } from "react-toastify";
 import Context from "../context";
@@ -9,11 +9,13 @@ import Context from "../context";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
+
   const navigate = useNavigate();
   const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
+
     setData((prev) => ({
       ...prev,
       [name]: value,
@@ -41,18 +43,15 @@ const Login = () => {
       }
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success("Login successful");
 
-        // Refresh user
-        const user = await fetchUserDetails();
-        fetchUserAddToCart();
+        // Refresh user state
+        await fetchUserDetails();
+        await fetchUserAddToCart();
 
-        // Admin redirect
-        if (user?.role?.toLowerCase() === "admin") {
-          navigate("/admin-panel");
-        } else {
-          navigate("/");
-        }
+        // Always redirect to admin panel
+        // AdminPanel component will automatically block non-admin users
+        navigate("/admin-panel");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -64,21 +63,23 @@ const Login = () => {
     <section id="login">
       <div className="mx-auto container p-4">
         <div className="bg-white p-5 w-full max-w-sm mx-auto">
+
           <div className="w-20 h-20 mx-auto">
             <img src={loginIcons} alt="login icons" />
           </div>
 
-          <form className="pt-6 flex flex-col gap-2" onSubmit={handleSubmit}>
-            <div className="grid">
+          <form className="pt-6 flex flex-col gap-4" onSubmit={handleSubmit}>
+            
+            <div>
               <label>Email :</label>
-              <div className="bg-slate-100 p-2">
+              <div className="bg-slate-100 p-2 mt-1">
                 <input
                   type="email"
                   name="email"
                   value={data.email}
                   onChange={handleOnChange}
                   placeholder="Enter email"
-                  className="w-full h-full outline-none bg-transparent"
+                  className="w-full outline-none bg-transparent"
                   required
                 />
               </div>
@@ -86,18 +87,18 @@ const Login = () => {
 
             <div>
               <label>Password :</label>
-              <div className="bg-slate-100 p-2 flex">
+              <div className="bg-slate-100 p-2 mt-1 flex items-center">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={data.password}
                   onChange={handleOnChange}
                   placeholder="Enter password"
-                  className="w-full h-full outline-none bg-transparent"
+                  className="w-full outline-none bg-transparent"
                   required
                 />
                 <div
-                  className="cursor-pointer text-xl"
+                  className="cursor-pointer text-xl ml-2"
                   onClick={() => setShowPassword((prev) => !prev)}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -107,10 +108,11 @@ const Login = () => {
 
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 w-full max-w-[150px] rounded-full mx-auto block mt-6"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full mt-4"
             >
               Login
             </button>
+
           </form>
         </div>
       </div>
