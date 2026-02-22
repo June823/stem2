@@ -7,61 +7,51 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
 import SummaryApi from './common';
 import Context from './context';
-import { useDispatch } from 'react-redux';
-import { setUserDetails } from './store/userSlice';
 
 function App() {
-  const dispatch = useDispatch();
+  const [user, setUser] = useState(null);
   const [cartProductCount, setCartProductCount] = useState(0);
 
+  // 🔥 GET LOGGED IN USER
   const fetchUserDetails = async () => {
     try {
-      const response = await fetch(SummaryApi.current_user.url, {
-        method: SummaryApi.current_user.method,
-        credentials: 'include',
+      const response = await fetch(SummaryApi.userDetails.url, {
+        method: SummaryApi.userDetails.method,
+        credentials: "include",
       });
 
-      if (!response.ok) {
-        if (response.status === 401) return;
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const data = await response.json();
+
       if (data.success) {
-        dispatch(setUserDetails(data.data));
+        setUser(data.data);
+        return data.data;
+      } else {
+        setUser(null);
+        return null;
       }
-    } catch (err) {
-      console.error('Error fetching user details:', err);
+    } catch (error) {
+      setUser(null);
+      return null;
     }
   };
 
+  // 🔥 GET CART COUNT
   const fetchUserAddToCart = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = { 'Content-Type': 'application/json' };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(SummaryApi.addToCartProductCount.url, {
-        method: SummaryApi.addToCartProductCount.method,
-        headers,
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          setCartProductCount(0);
-          return;
+      const response = await fetch(
+        SummaryApi.addToCartProductCount.url,
+        {
+          method: SummaryApi.addToCartProductCount.method,
+          credentials: "include",
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      );
 
       const data = await response.json();
-      setCartProductCount(data?.data?.count || 0);
-    } catch (err) {
-      console.error('Error fetching cart count:', err);
+
+      if (data.success) {
+        setCartProductCount(data?.data?.count || 0);
+      }
+    } catch (error) {
       setCartProductCount(0);
     }
   };
@@ -74,6 +64,8 @@ function App() {
   return (
     <Context.Provider
       value={{
+        user,
+        setUser,
         fetchUserDetails,
         cartProductCount,
         fetchUserAddToCart,
