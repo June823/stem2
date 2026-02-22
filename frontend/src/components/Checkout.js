@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { toast } from 'react-toastify';
 import Context from "../context";
-import SummaryApi from '../common'; // ✅ Import your API map
+import SummaryApi from '../common';
 
 function Checkout({ cartItems }) {
     const { user } = useContext(Context);
@@ -13,7 +13,7 @@ function Checkout({ cartItems }) {
         }
 
         try {
-            // ✅ Use SummaryApi instead of hardcoded string
+            // ✅ We call the URL from SummaryApi
             const response = await fetch(SummaryApi.payment.url, {
                 method: SummaryApi.payment.method,
                 headers: { 'Content-Type': 'application/json' },
@@ -21,16 +21,16 @@ function Checkout({ cartItems }) {
                 body: JSON.stringify({ 
                     products: cartItems.map(item => ({
                         productName: item.productId?.productName || item.productName || "Product",
-                        // ✅ Force price to be a number and default to 0 to prevent NaN errors
                         price: Number(item.productId?.price || item.price) || 0,
                         quantity: item.quantity || 1
                     }))
                 }),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Unauthorized or Server Error");
+            // ✅ Check if response is actually JSON before parsing
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("Server sent a non-JSON response. Check your Backend Route URL.");
             }
 
             const data = await response.json();
@@ -46,10 +46,7 @@ function Checkout({ cartItems }) {
     };
 
     return (
-        <button
-            onClick={handleCheckout}
-            className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition font-medium'
-        >
+        <button onClick={handleCheckout} className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition'>
             Pay with Stripe
         </button>
     );
