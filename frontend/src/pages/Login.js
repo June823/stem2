@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import loginIcons from "../assets/signin.gif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate, Link } from "react-router-dom";
 import SummaryApi from "../common";
 import { toast } from "react-toastify";
+import Context from "../context";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,7 +21,6 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // 1️⃣ LOGIN
       const res = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
         credentials: "include",
@@ -37,22 +38,15 @@ const Login = () => {
       if (result.success) {
         toast.success("Login successful");
 
-        // 2️⃣ GET USER DETAILS AFTER LOGIN
-        const userRes = await fetch(SummaryApi.userDetails.url, {
-          method: "GET",
-          credentials: "include",
-        });
+        // 🔥 Update user globally
+        const user = await fetchUserDetails();
+        await fetchUserAddToCart();
 
-        const userData = await userRes.json();
-
-        if (userData.success) {
-          const role = userData.data.role?.toUpperCase();
-
-          if (role === "ADMIN") {
-            navigate("/admin-panel", { replace: true });
-          } else {
-            navigate("/", { replace: true });
-          }
+        // 🔥 Redirect based on role
+        if (user?.role?.toUpperCase() === "ADMIN") {
+          navigate("/admin-panel", { replace: true });
+        } else {
+          navigate("/", { replace: true });
         }
       }
     } catch (error) {
@@ -108,9 +102,9 @@ const Login = () => {
 
           </form>
 
-          {/* ✅ SIGN UP BUTTON ADDED HERE */}
+          {/* ✅ SIGNUP BUTTON */}
           <p className="mt-5 text-center">
-            Don’t have an account?{" "}
+            Don't have account?{" "}
             <Link to="/sign-up" className="text-red-600 font-semibold">
               Sign Up
             </Link>
