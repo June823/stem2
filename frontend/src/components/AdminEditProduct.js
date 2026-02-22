@@ -11,17 +11,17 @@ import { toast } from 'react-toastify'
 const AdminEditProduct = ({
     onClose,
     productData,
-    fetchData // ✅ Standardized to camelCase
+    fetchData 
 }) => {
-
+    // 1. Initialize state with ALL existing product data
     const [data, setData] = useState({
         ...productData,
-        productName: productData?.productName,
-        category: productData?.category,
+        productName: productData?.productName || "",
+        category: productData?.category || "",
         productImage: productData?.productImage || [],
-        description: productData?.description,
-        price: productData?.price,
-        _id: productData?._id // ✅ Ensure ID is included for the update query
+        description: productData?.description || "",
+        price: productData?.price || "",
+        _id: productData?._id // ✅ CRITICAL: Backend needs this ID to find the product
     })
     
     const [openFullScreenImage, setOpenFullScreenImage] = useState(false)
@@ -29,8 +29,8 @@ const AdminEditProduct = ({
 
     const handleOnChange = (e) => {
         const { name, value } = e.target
-        setData((preve) => ({
-            ...preve,
+        setData((prev) => ({
+            ...prev,
             [name]: value
         }))
     }
@@ -41,9 +41,9 @@ const AdminEditProduct = ({
 
         const uploadImageCloudinary = await uploadImage(file)
 
-        setData((preve) => ({
-            ...preve,
-            productImage: [...preve.productImage, uploadImageCloudinary.url]
+        setData((prev) => ({
+            ...prev,
+            productImage: [...prev.productImage, uploadImageCloudinary.url]
         }))
     }
 
@@ -51,8 +51,8 @@ const AdminEditProduct = ({
         const newProductImage = [...data.productImage]
         newProductImage.splice(index, 1)
 
-        setData((preve) => ({
-            ...preve,
+        setData((prev) => ({
+            ...prev,
             productImage: [...newProductImage]
         }))
     }
@@ -63,27 +63,34 @@ const AdminEditProduct = ({
         try {
             const response = await fetch(SummaryApi.updateProduct.url, {
                 method: SummaryApi.updateProduct.method,
-                credentials: 'include', // ✅ Mandatory for Render Admin sessions
                 headers: {
                     "content-type": "application/json"
                 },
+                credentials: 'include', // ✅ Mandatory for Admin cookie verification
                 body: JSON.stringify(data)
             })
+
+            // 2. Catch the "Unexpected Token <" error before it crashes the app
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const errorBody = await response.text();
+                console.error("Non-JSON response received:", errorBody);
+                throw new Error("Server returned HTML (404/500). Check if your Backend URL is correct.");
+            }
 
             const responseData = await response.json()
 
             if (responseData.success) {
                 toast.success(responseData?.message)
                 onClose()
-                if(fetchData) fetchData() // ✅ Call the refresh function correctly
+                if(fetchData) fetchData() 
+            } else {
+                toast.error(responseData?.message || "Update failed")
             }
 
-            if (responseData.error) {
-                toast.error(responseData?.message)
-            }
         } catch (error) {
             console.error("Update Error:", error)
-            toast.error("Checkout failed. Please check your connection.")
+            toast.error(error.message || "Failed to update product. Check your connection.");
         }
     }
 
@@ -132,27 +139,25 @@ const AdminEditProduct = ({
                         </div>
                     </label>
 
-                    <div>
-                        {data?.productImage[0] ? (
-                            <div className='flex items-center gap-2 flex-wrap'>
-                                {data.productImage.map((el, index) => (
-                                    <div className='relative group' key={index}>
-                                        <img
-                                            src={el}
-                                            alt={el}
-                                            width={80}
-                                            height={80}
-                                            className='bg-slate-100 border cursor-pointer object-scale-down h-20 w-20'
-                                            onClick={() => {
-                                                setOpenFullScreenImage(true)
-                                                setFullScreenImage(el)
-                                            }} />
-                                        <div className='absolute bottom-0 right-0 p-1 text-white bg-red-600 rounded-full hidden group-hover:block cursor-pointer' onClick={() => handleDeleteProductImage(index)}>
-                                            <MdDelete />
-                                        </div>
+                    <div className='flex items-center gap-2 flex-wrap'>
+                        {data?.productImage.length > 0 ? (
+                            data.productImage.map((el, index) => (
+                                <div className='relative group' key={index}>
+                                    <img
+                                        src={el}
+                                        alt={el}
+                                        width={80}
+                                        height={80}
+                                        className='bg-slate-100 border cursor-pointer object-scale-down h-20 w-20'
+                                        onClick={() => {
+                                            setOpenFullScreenImage(true)
+                                            setFullScreenImage(el)
+                                        }} />
+                                    <div className='absolute bottom-0 right-0 p-1 text-white bg-red-600 rounded-full hidden group-hover:block cursor-pointer' onClick={() => handleDeleteProductImage(index)}>
+                                        <MdDelete />
                                     </div>
-                                ))}
-                            </div>
+                                </div>
+                            ))
                         ) : (
                             <p className='text-red-600 text-xs'>*Please upload product image</p>
                         )}
@@ -180,7 +185,7 @@ const AdminEditProduct = ({
                         value={data.description}
                     />
 
-                    <button className='px-3 py-2 bg-red-600 text-white mb-10 hover:bg-red-700 rounded transition-colors'>Update Product</button>
+                    <button type="submit" className='px-3 py-2 bg-red-600 text-white mb-10 hover:bg-red-700 rounded transition-colors'>Update Product</button>
                 </form>
             </div>
 
