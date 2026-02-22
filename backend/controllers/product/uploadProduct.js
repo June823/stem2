@@ -1,9 +1,8 @@
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("../../config/cloudinary"); // we created earlier
+const cloudinary = require("../../config/cloudinary");
 const Product = require("../../models/productModel");
 
-// Cloudinary storage configuration
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -43,13 +42,12 @@ const UploadProductController = (req, res) => {
         });
       }
 
-      // Cloudinary returns full URLs
       const productImage = req.files.map((file) => file.path);
 
       const product = await Product.create({
         productName,
         category,
-        productImage, // now stores full Cloudinary URL
+        productImage,
         description: description || "",
         price: parseFloat(price),
       });
