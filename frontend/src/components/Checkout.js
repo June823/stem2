@@ -5,25 +5,20 @@ import Context from "../context";
 function Checkout({ cartItems }) {
   const { user } = useContext(Context);
 
-  // ✅ Added 'async' here to fix the "Unexpected reserved word 'await'" error
   const handleCheckout = async () => {
-    
-    // 1. Safety Check: Ensure user is logged in
     if (!user?._id) {
       toast.error("Please login to proceed to checkout");
       return;
     }
 
     try {
-      // 2. Call your backend (stem2-11)
+      // ✅ Use credentials: "include" to send the cookie to the backend
       const response = await fetch('https://stem2-11.onrender.com/api/payment/create-checkout-session', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: "include", 
         body: JSON.stringify({ 
-          products: cartItems, // This passes the array to your controller
+          products: cartItems,
           userId: user._id 
         }),
       });
@@ -31,10 +26,9 @@ function Checkout({ cartItems }) {
       const data = await response.json();
 
       if (data.url) {
-        // 3. Redirect to Stripe's secure payment page
         window.location.href = data.url;
       } else {
-        toast.error(data.message || 'Failed to start checkout.');
+        toast.error(data.message || 'Checkout session failed.');
       }
     } catch (err) {
       console.error('Checkout error:', err);
@@ -43,13 +37,9 @@ function Checkout({ cartItems }) {
   };
 
   return (
-    <button
-      onClick={handleCheckout}
-      className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition'
-    >
+    <button onClick={handleCheckout} className='bg-blue-600 text-white w-full p-2 mt-2 rounded'>
       Pay with Stripe
     </button>
   );
 }
-
 export default Checkout;
