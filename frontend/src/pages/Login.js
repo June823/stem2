@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import loginIcons from "../assets/signin.gif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SummaryApi from "../common";
 import { toast } from "react-toastify";
-import useFetchUserDetails from "../helpers/fetchUserDetails";
+import Context from "../context";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  const fetchUserDetails = useFetchUserDetails();
+  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
+
     setData((prev) => ({
       ...prev,
       [name]: value,
@@ -27,7 +28,7 @@ const Login = () => {
     try {
       const response = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
-        credentials: "include",
+        credentials: "include", // IMPORTANT for cookies
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,11 +45,18 @@ const Login = () => {
       if (result.success) {
         toast.success("Login successful");
 
-        // 🔥 Update Redux
-        await fetchUserDetails();
+        // 🔥 Update user in Redux
+        const user = await fetchUserDetails();
 
-        // Redirect
-        navigate("/admin-panel");
+        // Optional: update cart
+        await fetchUserAddToCart();
+
+        // 🔥 Redirect based on role
+        if (user?.role?.toUpperCase() === "ADMIN") {
+          navigate("/admin-panel");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -60,11 +68,14 @@ const Login = () => {
     <section id="login">
       <div className="mx-auto container p-4">
         <div className="bg-white p-5 w-full max-w-sm mx-auto">
+
           <div className="w-20 h-20 mx-auto">
             <img src={loginIcons} alt="login icons" />
           </div>
 
           <form className="pt-6 flex flex-col gap-4" onSubmit={handleSubmit}>
+
+            {/* Email */}
             <div>
               <label>Email :</label>
               <div className="bg-slate-100 p-2 mt-1">
@@ -73,12 +84,14 @@ const Login = () => {
                   name="email"
                   value={data.email}
                   onChange={handleOnChange}
+                  placeholder="Enter email"
                   className="w-full outline-none bg-transparent"
                   required
                 />
               </div>
             </div>
 
+            {/* Password */}
             <div>
               <label>Password :</label>
               <div className="bg-slate-100 p-2 mt-1 flex items-center">
@@ -87,6 +100,7 @@ const Login = () => {
                   name="password"
                   value={data.password}
                   onChange={handleOnChange}
+                  placeholder="Enter password"
                   className="w-full outline-none bg-transparent"
                   required
                 />
@@ -99,12 +113,14 @@ const Login = () => {
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
-              className="bg-red-600 text-white px-6 py-2 rounded-full mt-4"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full mt-4"
             >
               Login
             </button>
+
           </form>
         </div>
       </div>
