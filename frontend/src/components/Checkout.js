@@ -1,46 +1,46 @@
 import React, { useContext } from 'react';
 import { toast } from 'react-toastify';
 import Context from "../context";
+import SummaryApi from '../common'; // ✅ Import your API map
 
 function Checkout({ cartItems }) {
     const { user } = useContext(Context);
 
     const handleCheckout = async () => {
-        // 1. Guard Clause
         if (!user?._id) {
             toast.error("Please login to proceed to checkout");
             return;
         }
 
         try {
-            const response = await fetch('https://stem2-11.onrender.com/api/payment/create-checkout-session', {
-                method: 'POST',
+            // ✅ Use SummaryApi instead of hardcoded string
+            const response = await fetch(SummaryApi.payment.url, {
+                method: SummaryApi.payment.method,
                 headers: { 'Content-Type': 'application/json' },
-                credentials: "include", // ✅ MANDATORY: Tells Render to send your login session
+                credentials: "include", 
                 body: JSON.stringify({ 
                     products: cartItems.map(item => ({
-                        productName: item.productId?.productName || item.productName,
-                        price: item.productId?.price || item.price,
-                        quantity: item.quantity
+                        productName: item.productId?.productName || item.productName || "Product",
+                        // ✅ Force price to be a number and default to 0 to prevent NaN errors
+                        price: Number(item.productId?.price || item.price) || 0,
+                        quantity: item.quantity || 1
                     }))
                 }),
             });
 
-            // If the server rejected the cookie (CORS issue), this handles it
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Unauthorized");
+                throw new Error(errorData.message || "Unauthorized or Server Error");
             }
 
             const data = await response.json();
             if (data.url) {
-                window.location.href = data.url; // Redirect to Stripe
+                window.location.href = data.url; 
             } else {
                 toast.error(data.message || 'Payment session failed');
             }
         } catch (err) {
             console.error('Checkout error:', err);
-            // Displaying the specific error helps debugging
             toast.error(`Checkout failed: ${err.message}`);
         }
     };
