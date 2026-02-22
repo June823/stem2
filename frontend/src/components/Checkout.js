@@ -5,21 +5,25 @@ import Context from "../context";
 function Checkout({ cartItems }) {
   const { user } = useContext(Context);
 
- const handleCheckout = async () => {
+  // ✅ Added 'async' here to fix the "Unexpected reserved word 'await'" error
+  const handleCheckout = async () => {
+    
+    // 1. Safety Check: Ensure user is logged in
     if (!user?._id) {
       toast.error("Please login to proceed to checkout");
       return;
     }
 
     try {
-      const response = await fetch("https://stem2-11.onrender.com/api/payment/create-checkout-session", {
+      // 2. Call your backend (stem2-11)
+      const response = await fetch('https://stem2-11.onrender.com/api/payment/create-checkout-session', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json' 
         },
-        credentials: "include", // 👈 Must be here
+        credentials: "include", 
         body: JSON.stringify({ 
-          products: cartItems,
+          products: cartItems, // This passes the array to your controller
           userId: user._id 
         }),
       });
@@ -27,26 +31,14 @@ function Checkout({ cartItems }) {
       const data = await response.json();
 
       if (data.url) {
-        window.location.href = data.url;
-      } else {
-        // This will tell you if the backend said "unauthorized"
-        toast.error(data.message || 'Session failed');
-      }
-    } catch (err) {
-      toast.error('Checkout failed. Open console to see why.');
-    }
-  };
-      const data = await response.json();
-
-      if (data.url) {
-        // Redirect to Stripe
+        // 3. Redirect to Stripe's secure payment page
         window.location.href = data.url;
       } else {
         toast.error(data.message || 'Failed to start checkout.');
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      toast.error('Checkout failed. Make sure you are logged in.');
+      toast.error('Checkout failed. Please check your connection.');
     }
   };
 
