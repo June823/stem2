@@ -27,7 +27,7 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
 
   useEffect(() => { fetchData() }, [category])
 
-  // ✅ FIXED DELETE LOGIC (Using productId)
+  // ✅ FIXED DELETE LOGIC WITH INSTANT UI UPDATE
   const handleDeleteProduct = async (e, id) => {
     e.preventDefault(); 
     e.stopPropagation();
@@ -36,11 +36,15 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
         method: SummaryApi.deleteProduct.method,
         headers: { "content-type": "application/json" },
         credentials: 'include',
-        body: JSON.stringify({ productId: id }) // 👈 Matches your backend controller
+        body: JSON.stringify({ productId: id })
       })
       const resData = await response.json()
       if (resData.success) { 
         toast.success(resData.message); 
+        
+        // ✅ INSTANT UI UPDATE: Remove from current view
+        setData((prev) => prev.filter(item => item._id !== id))
+        
         fetchData(); 
       } else { 
         toast.error(resData.message); 
@@ -54,8 +58,6 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
       <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,320px))] justify-center md:justify-between gap-4 md:gap-6'>
         {!loading && data.map((product) => (
           <div key={product?._id} className='relative group bg-white rounded-sm shadow'>
-            
-            {/* ✅ ADMIN CONTROLS */}
             {(user?.role === "ADMIN" || user?.role === "ADMINISTRATOR") && (
               <div className='absolute top-2 right-2 flex gap-2 z-20 hidden group-hover:flex'>
                 <div className='bg-green-600 text-white p-2 rounded-full cursor-pointer shadow-md' onClick={(e) => {
@@ -65,7 +67,6 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
                 <div className='bg-red-600 text-white p-2 rounded-full cursor-pointer shadow-md' onClick={(e) => handleDeleteProduct(e, product?._id)}><MdDelete /></div>
               </div>
             )}
-
             <Link to={"/product/" + product?._id} className='block'>
               <div className='bg-slate-200 h-48 flex justify-center items-center'>
                 <img src={getImageUrl(product?.productImage?.[0])} className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply' alt="" />
