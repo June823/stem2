@@ -24,16 +24,18 @@ const VerticalCardProduct = ({ category, heading }) => {
     setLoading(true)
     const categoryProduct = await fetchCategoryWiseProduct(category)
     setLoading(false)
-    setData(categoryProduct?.data || [])
+    
+    // ✅ FIX: Only show products that are NOT deleted
+    const activeProducts = (categoryProduct?.data || []).filter(p => !p.deleted)
+    setData(activeProducts)
   }
 
   useEffect(() => { fetchData() }, [category])
 
-  // ✅ FIXED DELETE LOGIC WITH INSTANT UI UPDATE
   const handleDeleteProduct = async (e, id) => {
     e.preventDefault()
     e.stopPropagation()
-    if (window.confirm("Delete this product?")) {
+    if (window.confirm("Move this product to trash?")) {
       const response = await fetch(SummaryApi.deleteProduct.url, {
         method: SummaryApi.deleteProduct.method,
         headers: { "content-type": "application/json" },
@@ -44,12 +46,8 @@ const VerticalCardProduct = ({ category, heading }) => {
 
       if (dataResponse.success) {
         toast.success(dataResponse.message)
-        
-        // ✅ INSTANT UI UPDATE: Remove from local state immediately
+        // ✅ INSTANT UI UPDATE: Remove from screen immediately
         setData((prev) => prev.filter(item => item._id !== id))
-        
-        // Optional: still fetch to keep everything synced
-        fetchData() 
       } else {
         toast.error(dataResponse.message)
       }
