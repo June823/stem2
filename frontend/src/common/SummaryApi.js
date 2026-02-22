@@ -1,97 +1,97 @@
+const backendDomin = process.env.REACT_APP_API_URL;
+
 const SummaryApi = {
-  // User authentication
-  signIn: {
-    url: "https://stem2-11.onrender.com/api/signin",
-    method: "POST",
-  },
-  signUp: {
-    url: "https://stem2-11.onrender.com/api/signup",
-    method: "POST",
-  },
-  userDetails: {
-    url: "https://stem2-11.onrender.com/api/user-details",
-    method: "GET",
-  },
-  logoutUser: {
-    url: "https://stem2-11.onrender.com/api/userLogout",
-    method: "GET",
-  },
+    signUP : {
+        url : `${backendDomin}/api/signup`,
+        method : "post"
+    },
+    signIn : {
+        url : `${backendDomin}/api/signin`,
+        method : "post"
+    },
+    current_user : {
+        url : `${backendDomin}/api/user-details`,
+        method : "get"
+    },
+    logout_user : {
+        url : `${backendDomin}/api/userLogout`,
+        method : 'get'
+    },
+    allUser : {
+        url : `${backendDomin}/api/all-user`,
+        method : 'get'
+    },
+    updateUser : {
+        url : `${backendDomin}/api/update-user`,
+        method : "post"
+    },
+    uploadProduct : {
+        url : `${backendDomin}/api/upload-product`,
+        method : 'post'
+    },
+    allProduct : {
+        url : `${backendDomin}/api/get-product`,
+        method : 'get'
+    },
+    updateProduct : {
+        url : `${backendDomin}/api/update-product`,
+        method  : 'post'
+    },
+    deleteProduct : {
+        url: `${backendDomin}/api/delete-product`,
+        method: 'post'
+    },
+    categoryProduct : {
+        url : `${backendDomin}/api/get-categoryProduct`,
+        method : 'get'
+    },
+    categoryWiseProduct : {
+        url : `${backendDomin}/api/category-product`,
+        method : 'post'
+    },
+    productDetails : {
+        url : `${backendDomin}/api/product-details`,
+        method : 'post'
+    },
+    addToCartProduct : {
+        url : `${backendDomin}/api/addtocart`,
+        method : 'post'
+    },
+    addToCartProductCount : {
+        url : `${backendDomin}/api/countAddToCartProduct`,
+        method : 'get'
+    },
+    addToCartProductView : {
+        url : `${backendDomin}/api/view-card-product`,
+        method : 'get'
+    },
+    updateCartProduct : {
+        url : `${backendDomin}/api/update-cart-product`,
+        method : 'post'
+    },
+    deleteCartProduct : {
+        url : `${backendDomin}/api/delete-cart-product`,
+        method : 'post'
+    },
+    searchProduct : {
+        url : `${backendDomin}/api/search`,
+        method : 'get'
+    },
+    filterProduct : {
+        url : `${backendDomin}/api/filter-product`,
+        method : 'post'
+    }
+    ,
+    recommendations: {
+        url: `${backendDomin}/api/recommendations`,
+        method: 'get'
+    }
+    ,
+    adminSummary: {
+        url: `${backendDomin}/api/admin/summary`,
+        method: 'get'
+    }
+}
 
-  // Products
-  getProduct: {
-    url: "https://stem2-11.onrender.com/api/get-product",
-    method: "GET",
-  },
-  filterProduct: {
-    url: "https://stem2-11.onrender.com/api/filter-product",
-    method: "POST",
-  },
-  categoryProduct: {
-    url: "https://stem2-11.onrender.com/api/get-categoryProduct",
-    method: "GET",
-  },
-  categoryWiseProduct: {
-    url: "https://stem2-11.onrender.com/api/category-product",
-    method: "POST",
-  },
-  productDetails: {
-    url: "https://stem2-11.onrender.com/api/product-details",
-    method: "POST",
-  },
-  searchProduct: {
-    url: "https://stem2-11.onrender.com/api/search",
-    method: "GET",
-  },
-  recommendations: {
-    url: "https://stem2-11.onrender.com/api/recommendations",
-    method: "GET",
-  },
 
-  // Admin product actions
-  uploadProduct: {
-    url: "https://stem2-11.onrender.com/api/upload-product",
-    method: "POST",
-  },
-  updateProduct: {
-    url: "https://stem2-11.onrender.com/api/update-product",
-    method: "POST",
-  },
-  deleteProduct: {
-    url: "https://stem2-11.onrender.com/api/delete-product",
-    method: "POST",
-  },
-  undeleteProduct: {
-    url: "https://stem2-11.onrender.com/api/undelete-product",
-    method: "POST",
-  },
-
-  // Cart / user actions
-  addToCartProductCount: {
-    url: "https://stem2-11.onrender.com/api/countAddToCartProduct",
-    method: "GET",
-  },
-  addToCart: {
-    url: "https://stem2-11.onrender.com/api/addToCart",
-    method: "POST",
-  },
-  viewCartProduct: {
-    url: "https://stem2-11.onrender.com/api/view-card-product",
-    method: "GET",
-  },
-  updateCartProduct: {
-    url: "https://stem2-11.onrender.com/api/update-cart-product",
-    method: "POST",
-  },
-  deleteCartProduct: {
-    url: "https://stem2-11.onrender.com/api/delete-cart-product",
-    method: "POST",
-  },
-
-  // Admin dashboard / summary
-  adminSummary: {
-    url: "https://stem2-11.onrender.com/api/admin/summary",
-    method: "GET",
-  },
-};
-
-export default SummaryApi;
+export default SummaryApi
