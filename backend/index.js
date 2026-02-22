@@ -12,22 +12,26 @@ const PORT = process.env.PORT || 8080;
 
 connectDB();
 
-// 🔥 IMPORTANT
 app.use(cookieParser());
 
+// ✅ FULLY CORRECTED CORS FOR RENDER
 app.use(
   cors({
-    origin: "https://stem2-12.onrender.com",
-    credentials: true,
+    origin: "https://stem2-12.onrender.com", // Your exact frontend URL
+    credentials: true,                        // Allows cookies to be sent/received
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploads
+// ✅ IMAGE FIX: Serve static files from 'uploads' folder
+// This ensures that local/Cloudinary fallback images actually load
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// API Routes
 app.use("/api", require("./routes/index"));
 
 app.listen(PORT, () => {
