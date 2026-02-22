@@ -7,7 +7,6 @@ export const ContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [cartProductCount, setCartProductCount] = useState(0);
 
-  // 🔥 Get logged in user
   const fetchUserDetails = async () => {
     try {
       const response = await fetch(SummaryApi.userDetails.url, {
@@ -19,18 +18,14 @@ export const ContextProvider = ({ children }) => {
 
       if (data.success) {
         setUser(data.data);
-        return data.data;
       } else {
         setUser(null);
-        return null;
       }
     } catch (error) {
       setUser(null);
-      return null;
     }
   };
 
-  // 🔥 Get cart count
   const fetchUserAddToCart = async () => {
     try {
       const response = await fetch(
@@ -57,7 +52,6 @@ export const ContextProvider = ({ children }) => {
         user,
         setUser,
         cartProductCount,
-        setCartProductCount,
         fetchUserDetails,
         fetchUserAddToCart,
       }}
