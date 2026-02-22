@@ -1,6 +1,7 @@
-const backendDomain = process.env.REACT_APP_API_URL;
+const backendDomain = process.env.REACT_APP_API_URL || "https://stem2-11.onrender.com";
 
 const SummaryApi = {
+    // Authentication
     signUP : {
         url : `${backendDomain}/api/signup`,
         method : "post"
@@ -9,7 +10,6 @@ const SummaryApi = {
         url : `${backendDomain}/api/signin`,
         method : "post"
     },
-    // ✅ CHANGED from current_user to userDetails to match your context/index.js
     userDetails : {
         url : `${backendDomain}/api/user-details`,
         method : "get"
@@ -18,6 +18,8 @@ const SummaryApi = {
         url : `${backendDomain}/api/userLogout`,
         method : 'get'
     },
+
+    // User Management (Admin)
     allUser : {
         url : `${backendDomain}/api/all-user`,
         method : 'get'
@@ -26,6 +28,8 @@ const SummaryApi = {
         url : `${backendDomain}/api/update-user`,
         method : "post"
     },
+
+    // Product Management
     uploadProduct : {
         url : `${backendDomain}/api/upload-product`,
         method : 'post'
@@ -42,6 +46,8 @@ const SummaryApi = {
         url: `${backendDomain}/api/delete-product`,
         method: 'post'
     },
+
+    // Product Retrieval & Filtering
     categoryProduct : {
         url : `${backendDomain}/api/get-categoryProduct`,
         method : 'get'
@@ -54,6 +60,16 @@ const SummaryApi = {
         url : `${backendDomain}/api/product-details`,
         method : 'post'
     },
+    searchProduct : {
+        url : `${backendDomain}/api/search`,
+        method : 'get'
+    },
+    filterProduct : {
+        url : `${backendDomain}/api/filter-product`,
+        method : 'post'
+    },
+
+    // Cart Management
     addToCartProduct : {
         url : `${backendDomain}/api/addtocart`,
         method : 'post'
@@ -74,14 +90,14 @@ const SummaryApi = {
         url : `${backendDomain}/api/delete-cart-product`,
         method : 'post'
     },
-    searchProduct : {
-        url : `${backendDomain}/api/search`,
-        method : 'get'
-    },
-    filterProduct : {
-        url : `${backendDomain}/api/filter-product`,
+
+    // Payment (Stripe)
+    payment : {
+        url : `${backendDomain}/api/payment/create-checkout-session`,
         method : 'post'
     },
+
+    // Dashboard & Analytics
     recommendations: {
         url: `${backendDomain}/api/recommendations`,
         method: 'get'
