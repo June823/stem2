@@ -5,8 +5,9 @@ const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [cartProductCount, setCartProductCount] = useState(0);
 
-  // 🔥 Fetch user directly here (no external file needed)
+  // 🔥 Get logged in user
   const fetchUserDetails = async () => {
     try {
       const response = await fetch(SummaryApi.userDetails.url, {
@@ -17,14 +18,36 @@ export const ContextProvider = ({ children }) => {
       const data = await response.json();
 
       if (data.success) {
-        setUser(data.data); // store user in context
+        setUser(data.data);
         return data.data;
+      } else {
+        setUser(null);
+        return null;
       }
-
-      return null;
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      setUser(null);
       return null;
+    }
+  };
+
+  // 🔥 Get cart count
+  const fetchUserAddToCart = async () => {
+    try {
+      const response = await fetch(
+        SummaryApi.addToCartProductCount.url,
+        {
+          method: SummaryApi.addToCartProductCount.method,
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCartProductCount(data?.data?.count || 0);
+      }
+    } catch (error) {
+      setCartProductCount(0);
     }
   };
 
@@ -33,7 +56,10 @@ export const ContextProvider = ({ children }) => {
       value={{
         user,
         setUser,
+        cartProductCount,
+        setCartProductCount,
         fetchUserDetails,
+        fetchUserAddToCart,
       }}
     >
       {children}
