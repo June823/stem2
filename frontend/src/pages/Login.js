@@ -1,16 +1,14 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import loginIcons from "../assets/signin.gif";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import SummaryApi from "../common";
 import { toast } from "react-toastify";
-import Context from "../context";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,12 +19,11 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      // 1️⃣ LOGIN
       const res = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
@@ -40,15 +37,22 @@ const Login = () => {
       if (result.success) {
         toast.success("Login successful");
 
-        // 🔥 Wait for Redux to update
-        const user = await fetchUserDetails();
+        // 2️⃣ GET USER DETAILS AFTER LOGIN
+        const userRes = await fetch(SummaryApi.userDetails.url, {
+          method: "GET",
+          credentials: "include",
+        });
 
-        await fetchUserAddToCart();
+        const userData = await userRes.json();
 
-        if (user?.role?.toUpperCase() === "ADMIN") {
-          navigate("/admin-panel", { replace: true });
-        } else {
-          navigate("/", { replace: true });
+        if (userData.success) {
+          const role = userData.data.role?.toUpperCase();
+
+          if (role === "ADMIN") {
+            navigate("/admin-panel", { replace: true });
+          } else {
+            navigate("/", { replace: true });
+          }
         }
       }
     } catch (error) {
@@ -103,6 +107,15 @@ const Login = () => {
             </button>
 
           </form>
+
+          {/* ✅ SIGN UP BUTTON ADDED HERE */}
+          <p className="mt-5 text-center">
+            Don’t have an account?{" "}
+            <Link to="/sign-up" className="text-red-600 font-semibold">
+              Sign Up
+            </Link>
+          </p>
+
         </div>
       </div>
     </section>
