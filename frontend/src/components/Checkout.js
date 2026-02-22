@@ -1,25 +1,42 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { toast } from 'react-toastify';
+import Context from "../context";
 
 function Checkout({ cartItems }) {
+  const { user } = useContext(Context);
+
   const handleCheckout = async () => {
+    // 1. Guard Clause: Don't even try if the user isn't logged in
+    if (!user?._id) {
+      toast.error("Please login to proceed to checkout");
+      return;
+    }
+
     try {
+      // 2. Add credentials: "include" so the backend gets the token/cookie
       const response = await fetch('https://stem2-11.onrender.com/api/payment/create-checkout-session', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ products: cartItems }),
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        credentials: "include", // 🔥 CRITICAL for Render cookies
+        body: JSON.stringify({ 
+          products: cartItems,
+          userId: user._id // Pass user ID explicitly if your backend needs it
+        }),
       });
 
       const data = await response.json();
 
       if (data.url) {
-        // New Stripe method: redirect directly to session URL
+        // Redirect to Stripe
         window.location.href = data.url;
       } else {
-        alert('Failed to start checkout.');
+        toast.error(data.message || 'Failed to start checkout.');
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      alert('Checkout failed. See console for details.');
+      toast.error('Checkout failed. Make sure you are logged in.');
     }
   };
 
