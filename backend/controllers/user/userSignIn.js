@@ -37,11 +37,11 @@ async function userSignInController(req, res) {
       { expiresIn: "8h" }
     );
 
-    // ✅ COOKIE SETTINGS (VERY IMPORTANT)
+    // Cookie (for production on Render)
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,       // REQUIRED on Render
-      sameSite: "none",   // REQUIRED for cross-domain
+      secure: true,
+      sameSite: "none",
       maxAge: 8 * 60 * 60 * 1000,
     });
 
@@ -49,6 +49,13 @@ async function userSignInController(req, res) {
       message: "Login successful",
       success: true,
       token,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePic: user.profilePic,
+      },
     });
 
   } catch (err) {
