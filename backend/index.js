@@ -17,8 +17,8 @@ app.use(cookieParser());
 // ✅ FULLY CORRECTED CORS FOR RENDER
 app.use(
   cors({
-    origin: "https://stem2-12.onrender.com", // Your exact frontend URL
-    credentials: true,                        // Allows cookies to be sent/received
+    origin: "https://stem2-12.onrender.com", // Your exact frontend
+    credentials: true,                        // Allows cookies to work
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
