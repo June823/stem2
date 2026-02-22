@@ -10,7 +10,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { fetchUserDetails } = useContext(Context);
+
+  const { fetchUserDetails, fetchUserAddToCart } =
+    useContext(Context);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,15 +40,13 @@ const Login = () => {
       if (result.success) {
         toast.success("Login successful");
 
-        // Save token
-        if (result.token) {
-          localStorage.setItem("token", result.token);
-        }
-
-        // Refresh user in context
+        // Refresh user
         await fetchUserDetails();
 
-        // Redirect using backend role
+        // Refresh cart
+        await fetchUserAddToCart();
+
+        // Redirect
         if (result.data.role === "ADMIN") {
           navigate("/admin-panel", { replace: true });
         } else {
