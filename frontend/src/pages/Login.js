@@ -9,111 +9,95 @@ import Context from "../context";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
-
   const navigate = useNavigate();
   const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
 
-  const handleOnChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(SummaryApi.signIn.url, {
+      const res = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
-        credentials: "include", // IMPORTANT for cookies
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
+      const result = await res.json();
 
-      if (!response.ok) {
-        toast.error(result.message || "Login failed");
+      if (!res.ok) {
+        toast.error(result.message);
         return;
       }
 
       if (result.success) {
         toast.success("Login successful");
 
-        // 🔥 Update Redux user (THIS IS CRITICAL)
+        // 🔥 Wait for Redux to update
         const user = await fetchUserDetails();
 
-        // Optional: update cart count
         await fetchUserAddToCart();
 
-        // 🔥 Redirect based on role
         if (user?.role?.toUpperCase() === "ADMIN") {
-          navigate("/admin-panel");
+          navigate("/admin-panel", { replace: true });
         } else {
-          navigate("/");
+          navigate("/", { replace: true });
         }
       }
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Failed to connect to server.");
+      toast.error("Server error");
     }
   };
 
   return (
-    <section id="login">
-      <div className="mx-auto container p-4">
-        <div className="bg-white p-5 w-full max-w-sm mx-auto">
+    <section>
+      <div className="container mx-auto p-4">
+        <div className="bg-white p-5 max-w-sm mx-auto">
 
           <div className="w-20 h-20 mx-auto">
-            <img src={loginIcons} alt="login icons" />
+            <img src={loginIcons} alt="login" />
           </div>
 
-          <form onSubmit={handleSubmit} className="pt-6 flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-6">
 
-            {/* Email */}
-            <div>
-              <label>Email :</label>
-              <div className="bg-slate-100 p-2 mt-1">
-                <input
-                  type="email"
-                  name="email"
-                  value={data.email}
-                  onChange={handleOnChange}
-                  className="w-full outline-none bg-transparent"
-                  required
-                />
-              </div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={data.email}
+              onChange={handleChange}
+              className="p-2 bg-slate-100"
+              required
+            />
+
+            <div className="flex bg-slate-100 p-2">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={data.password}
+                onChange={handleChange}
+                className="w-full bg-transparent outline-none"
+                required
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="cursor-pointer"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
 
-            {/* Password */}
-            <div>
-              <label>Password :</label>
-              <div className="bg-slate-100 p-2 mt-1 flex items-center">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={data.password}
-                  onChange={handleOnChange}
-                  className="w-full outline-none bg-transparent"
-                  required
-                />
-                <div
-                  className="cursor-pointer ml-2"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </div>
-              </div>
-            </div>
-
-            {/* Button */}
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-full mt-4"
+              className="bg-red-600 text-white py-2 rounded-full"
             >
               Login
             </button>
