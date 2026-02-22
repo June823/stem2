@@ -1,122 +1,67 @@
-import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import loginIcons from "../assets/signin.gif";
+import React, { createContext, useState } from "react";
 import SummaryApi from "../common";
-import { toast } from "react-toastify";
-import Context from "../context";
 
-const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [data, setData] = useState({ email: "", password: "" });
-  const navigate = useNavigate();
+const Context = createContext();
 
-  const { fetchUserDetails, fetchUserAddToCart } =
-    useContext(Context);
+export const ContextProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [cartProductCount, setCartProductCount] = useState(0);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  // 🔥 GET LOGGED IN USER
+  const fetchUserDetails = async () => {
     try {
-      const res = await fetch(SummaryApi.signIn.url, {
-        method: SummaryApi.signIn.method,
+      const response = await fetch(SummaryApi.userDetails.url, {
+        method: SummaryApi.userDetails.method,
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
       });
 
-      const result = await res.json();
+      const data = await response.json();
 
-      if (!res.ok) {
-        toast.error(result.message);
-        return;
-      }
-
-      if (result.success) {
-        toast.success("Login successful");
-
-        // Refresh user
-        await fetchUserDetails();
-
-        // Refresh cart
-        await fetchUserAddToCart();
-
-        // Redirect
-        if (result.data.role === "ADMIN") {
-          navigate("/admin-panel", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+      if (data.success && data.data) {
+        setUser(data.data);
+      } else {
+        setUser(null);
       }
     } catch (error) {
-      toast.error("Server error");
+      setUser(null);
+    }
+  };
+
+  // 🔥 GET CART COUNT
+  const fetchUserAddToCart = async () => {
+    try {
+      const response = await fetch(
+        SummaryApi.addToCartProductCount.url,
+        {
+          method: SummaryApi.addToCartProductCount.method,
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setCartProductCount(data?.data?.count || 0);
+      }
+    } catch (error) {
+      setCartProductCount(0);
     }
   };
 
   return (
-    <section>
-      <div className="container mx-auto p-4">
-        <div className="bg-white p-5 max-w-sm mx-auto">
-
-          <div className="w-20 h-20 mx-auto">
-            <img src={loginIcons} alt="login" />
-          </div>
-
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-6">
-
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={data.email}
-              onChange={handleChange}
-              className="p-2 bg-slate-100"
-              required
-            />
-
-            <div className="flex bg-slate-100 p-2">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                value={data.password}
-                onChange={handleChange}
-                className="w-full bg-transparent outline-none"
-                required
-              />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                className="cursor-pointer"
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
-            </div>
-
-            <button
-              type="submit"
-              className="bg-red-600 text-white py-2 rounded-full"
-            >
-              Login
-            </button>
-
-          </form>
-
-          <p className="mt-5 text-center">
-            Don't have account?{" "}
-            <Link to="/sign-up" className="text-red-600 font-semibold">
-              Sign Up
-            </Link>
-          </p>
-
-        </div>
-      </div>
-    </section>
+    <Context.Provider
+      value={{
+        user,
+        setUser,
+        cartProductCount,
+        setCartProductCount,
+        fetchUserDetails,
+        fetchUserAddToCart,
+      }}
+    >
+      {children}
+    </Context.Provider>
   );
 };
 
-export default Login;
+export default Context;
