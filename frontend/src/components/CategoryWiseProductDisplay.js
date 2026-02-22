@@ -22,16 +22,18 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
     setLoading(true)
     const categoryProduct = await fetchCategoryWiseProduct(category)
     setLoading(false)
-    setData(categoryProduct?.data || [])
+    
+    // ✅ FIX: Filter out soft-deleted products
+    const activeProducts = (categoryProduct?.data || []).filter(p => !p.deleted)
+    setData(activeProducts)
   }
 
   useEffect(() => { fetchData() }, [category])
 
-  // ✅ FIXED DELETE LOGIC WITH INSTANT UI UPDATE
   const handleDeleteProduct = async (e, id) => {
     e.preventDefault(); 
     e.stopPropagation();
-    if (window.confirm("Delete this product permanently?")) {
+    if (window.confirm("Move this product to trash?")) {
       const response = await fetch(SummaryApi.deleteProduct.url, {
         method: SummaryApi.deleteProduct.method,
         headers: { "content-type": "application/json" },
@@ -41,11 +43,8 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
       const resData = await response.json()
       if (resData.success) { 
         toast.success(resData.message); 
-        
-        // ✅ INSTANT UI UPDATE: Remove from current view
+        // ✅ INSTANT UI UPDATE: Remove from state
         setData((prev) => prev.filter(item => item._id !== id))
-        
-        fetchData(); 
       } else { 
         toast.error(resData.message); 
       }
