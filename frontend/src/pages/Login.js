@@ -21,61 +21,72 @@ const Login = () => {
     e.preventDefault();
 
     try {
+      // 🔐 LOGIN REQUEST
       const res = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
 
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.message);
+        toast.error(result.message || "Login failed");
         return;
       }
 
       if (result.success) {
         toast.success("Login successful");
 
-        // 🔥 Update user globally
+        // 🔄 Refresh user in context
         const user = await fetchUserDetails();
         await fetchUserAddToCart();
 
-        // 🔥 Redirect based on role
-        if (user?.role?.toUpperCase() === "ADMIN") {
+        // 🚀 Redirect based on role
+        if (user && user.role && user.role.toUpperCase() === "ADMIN") {
           navigate("/admin-panel", { replace: true });
         } else {
           navigate("/", { replace: true });
         }
       }
     } catch (error) {
-      toast.error("Server error");
+      console.error(error);
+      toast.error("Server error. Please try again.");
     }
   };
 
   return (
     <section>
       <div className="container mx-auto p-4">
-        <div className="bg-white p-5 max-w-sm mx-auto">
+        <div className="bg-white p-5 max-w-sm mx-auto rounded shadow">
 
+          {/* Logo */}
           <div className="w-20 h-20 mx-auto">
             <img src={loginIcons} alt="login" />
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-6">
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 pt-6"
+          >
 
+            {/* Email */}
             <input
               type="email"
               name="email"
               placeholder="Email"
               value={data.email}
               onChange={handleChange}
-              className="p-2 bg-slate-100"
+              className="p-2 bg-slate-100 rounded"
               required
             />
 
-            <div className="flex bg-slate-100 p-2">
+            {/* Password */}
+            <div className="flex bg-slate-100 p-2 rounded">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -87,25 +98,29 @@ const Login = () => {
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
-                className="cursor-pointer"
+                className="cursor-pointer ml-2"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
+            {/* Login Button */}
             <button
               type="submit"
-              className="bg-red-600 text-white py-2 rounded-full"
+              className="bg-red-600 hover:bg-red-700 text-white py-2 rounded-full transition"
             >
               Login
             </button>
 
           </form>
 
-          {/* ✅ SIGNUP BUTTON */}
+          {/* Signup Link */}
           <p className="mt-5 text-center">
-            Don't have account?{" "}
-            <Link to="/sign-up" className="text-red-600 font-semibold">
+            Don't have an account?{" "}
+            <Link
+              to="/sign-up"
+              className="text-red-600 font-semibold hover:underline"
+            >
               Sign Up
             </Link>
           </p>
