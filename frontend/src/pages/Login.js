@@ -40,18 +40,10 @@ const Login = () => {
       if (result.success) {
         toast.success("Login successful");
 
-        // Refresh user
         await fetchUserDetails();
-
-        // Refresh cart
         await fetchUserAddToCart();
 
-        // Redirect
-        if (result.data.role === "ADMIN") {
-          navigate("/admin-panel", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
+        navigate("/", { replace: true });
       }
     } catch (error) {
       toast.error("Server error");
