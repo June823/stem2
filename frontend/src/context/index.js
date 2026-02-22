@@ -1,13 +1,13 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useCallback } from "react";
 import SummaryApi from "../common";
 
-const Context = createContext();
+const Context = createContext(null);
 
 export const ContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [cartProductCount, setCartProductCount] = useState(0);
 
-  // 🔥 GET LOGGED IN USER
+  // ✅ IMPROVED: Added 'return' so Login page can wait for this to finish
   const fetchUserDetails = async () => {
     try {
       const response = await fetch(SummaryApi.userDetails.url, {
@@ -15,33 +15,32 @@ export const ContextProvider = ({ children }) => {
         credentials: "include",
       });
 
-      const data = await response.json();
+      const dataResponse = await response.json();
 
-      if (data.success && data.data) {
-        setUser(data.data);
+      if (dataResponse.success) {
+        setUser(dataResponse.data);
+        return dataResponse; // Return data so caller knows it worked
       } else {
         setUser(null);
+        return dataResponse;
       }
     } catch (error) {
+      console.error("Context Error:", error);
       setUser(null);
     }
   };
 
-  // 🔥 GET CART COUNT
   const fetchUserAddToCart = async () => {
     try {
-      const response = await fetch(
-        SummaryApi.addToCartProductCount.url,
-        {
-          method: SummaryApi.addToCartProductCount.method,
-          credentials: "include",
-        }
-      );
+      const response = await fetch(SummaryApi.addToCartProductCount.url, {
+        method: SummaryApi.addToCartProductCount.method,
+        credentials: "include",
+      });
 
-      const data = await response.json();
+      const dataResponse = await response.json();
 
-      if (data.success) {
-        setCartProductCount(data?.data?.count || 0);
+      if (dataResponse.success) {
+        setCartProductCount(dataResponse?.data?.count || 0);
       }
     } catch (error) {
       setCartProductCount(0);
