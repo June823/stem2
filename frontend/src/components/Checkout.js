@@ -5,27 +5,37 @@ import Context from "../context";
 function Checkout({ cartItems }) {
   const { user } = useContext(Context);
 
-  const handleCheckout = async () => {
-    // 1. Guard Clause: Don't even try if the user isn't logged in
+ const handleCheckout = async () => {
     if (!user?._id) {
       toast.error("Please login to proceed to checkout");
       return;
     }
 
     try {
-      // 2. Add credentials: "include" so the backend gets the token/cookie
-      const response = await fetch('https://stem2-11.onrender.com/api/payment/create-checkout-session', {
+      const response = await fetch("https://stem2-11.onrender.com/api/payment/create-checkout-session", {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json' 
         },
-        credentials: "include", // 🔥 CRITICAL for Render cookies
+        credentials: "include", // 👈 Must be here
         body: JSON.stringify({ 
           products: cartItems,
-          userId: user._id // Pass user ID explicitly if your backend needs it
+          userId: user._id 
         }),
       });
 
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        // This will tell you if the backend said "unauthorized"
+        toast.error(data.message || 'Session failed');
+      }
+    } catch (err) {
+      toast.error('Checkout failed. Open console to see why.');
+    }
+  };
       const data = await response.json();
 
       if (data.url) {
