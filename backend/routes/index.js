@@ -1,7 +1,7 @@
 const express = require('express')
-
 const router = express.Router()
 
+// Controllers
 const userSignUpController = require("../controllers/user/userSignUp.js")
 const userSignInController = require('../controllers/user/userSignIn.js')
 const userDetailsController = require('../controllers/user/userDetails.js')
@@ -28,43 +28,41 @@ const recommendations = require('../controllers/product/recommendations.js')
 const adminOnly = require('../middleware/adminOnly')
 const adminSummary = require('../controllers/admin/summary.js')
 
+// ✅ ADDED PAYMENT CONTROLLER
+const paymentController = require('../controllers/user/paymentController.js')
 
+// Auth Routes
+router.post("/signup", userSignUpController)
+router.post("/signin", userSignInController)
+router.get("/user-details", authToken, userDetailsController)
+router.get("/userLogout", userLogout)
 
-router.post("/signup",userSignUpController)
-router.post("/signin",userSignInController)
-router.get("/user-details",authToken,userDetailsController)
-router.get("/userLogout",userLogout)
-
-//admin panel 
-router.get("/all-user",authToken,adminOnly,allUsers)
-router.post("/update-user",authToken,adminOnly,updateUser)
-
-//product
-router.post("/upload-product",authToken,adminOnly,UploadProductController)
-router.get("/get-product",getProductController)
-router.post("/update-product",authToken,adminOnly,updateProductController)
-router.post('/delete-product', authToken, adminOnly, deleteProduct)
-router.post('/undelete-product', authToken, adminOnly, undeleteProduct)
-router.get("/get-categoryProduct",getCategoryProduct)
-router.post("/category-product",getCategoryWiseProduct)
-router.post("/product-details",getProductDetails)
-router.get("/search",searchProduct)
-router.post("/filter-product",filterProductController)
-router.get('/recommendations', recommendations)
-// admin summary / dashboard counts
+// Admin Panel
+router.get("/all-user", authToken, adminOnly, allUsers)
+router.post("/update-user", authToken, adminOnly, updateUser)
 router.get('/admin/summary', authToken, adminOnly, adminSummary)
 
-//user add to cart
-router.post("/addToCart",authToken,addToCartController)
-router.get("/countAddToCartProduct",authToken,countAddToCartProduct)
-router.get("/view-card-product",authToken,addToCartViewProduct)
-router.post("/update-cart-product",authToken,updateAddToCartProduct)
-router.post("/delete-cart-product",authToken,deleteAddToCartProduct)
+// Product Routes
+router.post("/upload-product", authToken, adminOnly, UploadProductController)
+router.get("/get-product", getProductController)
+router.post("/update-product", authToken, adminOnly, updateProductController)
+router.post('/delete-product', authToken, adminOnly, deleteProduct)
+router.post('/undelete-product', authToken, adminOnly, undeleteProduct)
+router.get("/get-categoryProduct", getCategoryProduct)
+router.post("/category-product", getCategoryWiseProduct)
+router.post("/product-details", getProductDetails)
+router.get("/search", searchProduct)
+router.post("/filter-product", filterProductController)
+router.get('/recommendations', recommendations)
 
+// User Cart Routes
+router.post("/addToCart", authToken, addToCartController)
+router.get("/countAddToCartProduct", authToken, countAddToCartProduct)
+router.get("/view-card-product", authToken, addToCartViewProduct)
+router.post("/update-cart-product", authToken, updateAddToCartProduct)
+router.post("/delete-cart-product", authToken, deleteAddToCartProduct)
 
-
-
-
-
+// ✅ ADDED PAYMENT ROUTE (Matches SummaryApi.payment.url)
+router.post("/payment/create-checkout-session", authToken, paymentController)
 
 module.exports = router
