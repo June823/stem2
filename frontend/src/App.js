@@ -8,7 +8,8 @@ import { useEffect, useContext } from "react";
 import Context from "./context";
 
 function App() {
-  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
+  const { fetchUserDetails, fetchUserAddToCart } =
+    useContext(Context);
 
   useEffect(() => {
     fetchUserDetails();
