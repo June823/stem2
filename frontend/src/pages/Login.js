@@ -9,13 +9,12 @@ import Context from "../context";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [data, setData] = useState({ email: "", password: "" });
-  const navigate = useNavigate();
 
-  const { fetchUserDetails, fetchUserAddToCart } = useContext(Context);
+  const navigate = useNavigate();
+  const { fetchUserDetails } = useContext(Context);
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-
     setData((prev) => ({
       ...prev,
       [name]: value,
@@ -28,7 +27,7 @@ const Login = () => {
     try {
       const response = await fetch(SummaryApi.signIn.url, {
         method: SummaryApi.signIn.method,
-        credentials: "include", // IMPORTANT for cookies
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -45,11 +44,8 @@ const Login = () => {
       if (result.success) {
         toast.success("Login successful");
 
-        // 🔥 Update user in Redux
+        // 🔥 Update Context user
         const user = await fetchUserDetails();
-
-        // Optional: update cart
-        await fetchUserAddToCart();
 
         // 🔥 Redirect based on role
         if (user?.role?.toUpperCase() === "ADMIN") {
@@ -68,55 +64,43 @@ const Login = () => {
     <section id="login">
       <div className="mx-auto container p-4">
         <div className="bg-white p-5 w-full max-w-sm mx-auto">
-
           <div className="w-20 h-20 mx-auto">
             <img src={loginIcons} alt="login icons" />
           </div>
 
-          <form className="pt-6 flex flex-col gap-4" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="pt-6 flex flex-col gap-4">
 
-            {/* Email */}
-            <div>
-              <label>Email :</label>
-              <div className="bg-slate-100 p-2 mt-1">
-                <input
-                  type="email"
-                  name="email"
-                  value={data.email}
-                  onChange={handleOnChange}
-                  placeholder="Enter email"
-                  className="w-full outline-none bg-transparent"
-                  required
-                />
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              value={data.email}
+              onChange={handleOnChange}
+              required
+              className="bg-slate-100 p-2 outline-none"
+            />
+
+            <div className="bg-slate-100 p-2 flex items-center">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter password"
+                value={data.password}
+                onChange={handleOnChange}
+                required
+                className="w-full outline-none bg-transparent"
+              />
+              <div
+                className="cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </div>
             </div>
 
-            {/* Password */}
-            <div>
-              <label>Password :</label>
-              <div className="bg-slate-100 p-2 mt-1 flex items-center">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={data.password}
-                  onChange={handleOnChange}
-                  placeholder="Enter password"
-                  className="w-full outline-none bg-transparent"
-                  required
-                />
-                <div
-                  className="cursor-pointer ml-2"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </div>
-              </div>
-            </div>
-
-            {/* Submit Button */}
             <button
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full mt-4"
+              className="bg-red-600 text-white py-2 rounded-full"
             >
               Login
             </button>
