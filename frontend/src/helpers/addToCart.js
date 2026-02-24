@@ -1,50 +1,35 @@
-import SummaryApi from '../common'
+import SummaryApi from "../common";
+import { toast } from 'react-toastify';
 
-const addToCart = async (e, productId) => {
-  e.preventDefault();
+const addToCart = async (e, id, fetchUserAddToCart) => {
+    e?.stopPropagation();
+    e?.preventDefault();
 
-  try {
-    const token = localStorage.getItem("token");
-    // Use centralized API definition to avoid path mistakes
-    const addToCartUrl = (SummaryApi && SummaryApi.addToCartProduct && SummaryApi.addToCartProduct.url) || (process.env.REACT_APP_SERVER_DOMAIN ? `${process.env.REACT_APP_SERVER_DOMAIN}/api/addtocart` : 'https://stem2-11.onrender.com/api/addtocart')
+    const token = localStorage.getItem('token');
 
-    let response;
-
-    if (token) {
-      // If token exists in localStorage, use Authorization header
-      response = await fetch(addToCartUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ productId })
-      });
-    } else {
-      // Otherwise attempt cookie-based auth (credentials include)
-      response = await fetch(addToCartUrl, {
-        method: "POST",
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ productId })
-      });
+    if (!token) {
+        toast.error("Please login to add items to cart");
+        return;
     }
 
-    const data = await response.json();
+    const response = await fetch(SummaryApi.addToCartProduct.url, {
+        method: SummaryApi.addToCartProduct.method,
+        headers: {
+            "content-type": "application/json",
+            "Authorization": `Bearer ${token}` 
+        },
+        body: JSON.stringify({ productId: id })
+    });
 
-    if (data.success) {
-      console.log("Added to cart:", data);
-      alert("Product added to cart!");
+    const responseData = await response.json();
+
+    if (responseData.success) {
+        toast.success(responseData.message);
+        if(fetchUserAddToCart) fetchUserAddToCart();
     } else {
-      alert(data.message || "Error adding product to cart");
+        toast.error(responseData.message);
     }
-
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-    alert("Failed to add product to cart");
-  }
+    return responseData;
 };
 
 export default addToCart;
