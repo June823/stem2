@@ -44,10 +44,19 @@ const router = createBrowserRouter([
                 path : "product/:id",
                 element : <ProductDetails/>
             },
-            {
-                path : "about",
-                element : <AboutUs/>
-            },
+           // Add these to your routing configuration
+{
+    path : "about-us",
+    element : <AboutUs/>
+},
+{
+    path : "contact",
+    element : <Contact/>
+},
+{
+    path : "services",
+    element : <Services/> // Create a similar simple component for Services
+},
             {
                 path : 'cart',
                 element : <Cart/>
