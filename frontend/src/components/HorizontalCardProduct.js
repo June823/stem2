@@ -18,20 +18,26 @@ const HorizontalCardProduct = ({ category, heading }) => {
   const scrollElement = useRef()
   const { fetchUserAddToCart, user } = useContext(Context)
 
+  // ✅ Consistent KSh Formatter
   const displayKSh = (num) => `KSh ${Number(num || 0).toLocaleString()}`
 
   const fetchData = async () => {
     setLoading(true)
     const categoryProduct = await fetchCategoryWiseProduct(category)
     setLoading(false)
+    
+    // ✅ Filter: Only show products that are not marked as deleted
     const activeProducts = (categoryProduct?.data || []).filter(p => !p.deleted)
     setData(activeProducts)
   }
 
-  useEffect(() => { fetchData() }, [category])
+  useEffect(() => { 
+    fetchData() 
+  }, [category])
 
   const handleDeleteProduct = async (e, id) => {
-    e.preventDefault(); e.stopPropagation();
+    e.preventDefault(); 
+    e.stopPropagation();
     if (window.confirm("Move this product to trash?")) {
       const response = await fetch(SummaryApi.deleteProduct.url, {
         method: SummaryApi.deleteProduct.method,
@@ -71,16 +77,15 @@ const HorizontalCardProduct = ({ category, heading }) => {
 
             <Link to={"/product/" + product?._id} className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] h-36 bg-white rounded-sm shadow flex'>
               <div className='bg-slate-200 h-full p-2 min-w-[120px] md:min-w-[145px] flex justify-center items-center'>
-                {/* ✅ Image Fix applied here */}
                 <img src={getImageUrl(product?.productImage)} className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply' alt={product.productName}/>
               </div>
               <div className='p-4 grid w-full'>
                 <h2 className='font-medium text-base text-black line-clamp-1'>{product?.productName}</h2>
                 <p className='capitalize text-slate-500 text-xs'>{product?.category}</p>
                 <div className='flex items-center mt-1'>
-                  {/* ✅ Clean Price logic applied */}
+                  {/* ✅ FIX: Display valid price only (hides 0.00 bug) */}
                   <p className='text-red-600 font-bold'>
-                    {displayKSh(product?.sellingPrice || product?.price)}
+                    {displayKSh(product?.sellingPrice > 0 ? product?.sellingPrice : product?.price)}
                   </p>
                 </div>
                 <button className='text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full mt-2 self-start' onClick={(e) => { e.preventDefault(); addToCart(e, product?._id); fetchUserAddToCart(); }}>Add to Cart</button>
