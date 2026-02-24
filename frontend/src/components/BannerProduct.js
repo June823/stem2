@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import fibers1 from '../assets/banner/fibers1.jpeg'
 import fibers2 from '../assets/banner/fibers2.jpeg'
 import fibers3 from '../assets/banner/fibers3.jpeg'
@@ -10,59 +10,87 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 
 const BannerProduct = () => {
   const [currentImage, setCurrentImage] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   const bannerImages = [fibers1, fibers2, fibers3, fibers4, fibers5, fibers6, fibers7]
 
-  const nextImage = () => setCurrentImage(prev => (prev + 1) % bannerImages.length)
-  const prevImage = () => setCurrentImage(prev => (prev - 1 + bannerImages.length) % bannerImages.length)
+  // Memoized navigation to prevent unnecessary re-renders
+  const nextImage = useCallback(() => {
+    setCurrentImage(prev => (prev + 1) % bannerImages.length)
+  }, [bannerImages.length])
 
-  const intervalRef = useRef(null)
+  const prevImage = () => {
+    setCurrentImage(prev => (prev - 1 + bannerImages.length) % bannerImages.length)
+  }
 
-  // Preload images to avoid visible delay on transition
+  // Preload images for instant transitions
   useEffect(() => {
     bannerImages.forEach(src => {
       const img = new Image()
       img.src = src
     })
-  }, [])
+  }, [bannerImages])
 
+  // Autoplay Logic
   useEffect(() => {
-    // autoplay every 3s
-    intervalRef.current = setInterval(nextImage, 3000)
-    return () => clearInterval(intervalRef.current)
-  }, [])
+    if (isPaused) return; // Stop timer if user is hovering
 
-  // reset autoplay when user navigates manually to keep flow smooth
-  const handleNext = () => {
-    clearInterval(intervalRef.current)
-    nextImage()
-    intervalRef.current = setInterval(nextImage, 3000)
-  }
-
-  const handlePrev = () => {
-    clearInterval(intervalRef.current)
-    prevImage()
-    intervalRef.current = setInterval(nextImage, 3000)
-  }
+    const interval = setInterval(nextImage, 4000)
+    return () => clearInterval(interval)
+  }, [nextImage, isPaused])
 
   return (
-    <div className="container mx-auto px-4 rounded">
-      {/* Controls moved above the banner */}
-      <div className="flex justify-end gap-2 mb-2">
-        <button onClick={handlePrev} className="bg-white shadow rounded-full p-2"><FaAngleLeft /></button>
-        <button onClick={handleNext} className="bg-white shadow rounded-full p-2"><FaAngleRight /></button>
+    <div className="container mx-auto px-4 rounded my-4">
+      {/* Controls positioned for better UX */}
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider">Featured Collections</h3>
+        <div className="flex gap-2">
+          <button 
+            onClick={prevImage} 
+            className="bg-white hover:bg-slate-100 text-slate-700 shadow-md rounded-full p-2 transition-colors"
+            aria-label="Previous Image"
+          >
+            <FaAngleLeft />
+          </button>
+          <button 
+            onClick={nextImage} 
+            className="bg-white hover:bg-slate-100 text-slate-700 shadow-md rounded-full p-2 transition-colors"
+            aria-label="Next Image"
+          >
+            <FaAngleRight />
+          </button>
+        </div>
       </div>
 
-      <div className="h-56 md:h-72 w-full bg-slate-200 relative overflow-hidden rounded">
-        {/* Image Carousel */}
+      {/* Main Banner Container */}
+      <div 
+        className="h-60 md:h-80 w-full bg-slate-200 relative overflow-hidden rounded-xl shadow-inner"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
         <div
-          className="flex transition-transform duration-500 ease-in-out h-full"
-          style={{ transform: `translateX(-${currentImage * 100}%)`, willChange: 'transform' }}
+          className="flex transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) h-full"
+          style={{ transform: `translateX(-${currentImage * 100}%)` }}
         >
           {bannerImages.map((image, index) => (
             <div key={index} className="min-w-full h-full flex-shrink-0">
-              <img src={image} alt={`banner-${index}`} className="w-full h-full object-cover" />
+              <img 
+                src={image} 
+                alt={`Collection Banner ${index + 1}`} 
+                className="w-full h-full object-cover" 
+                loading={index === 0 ? "eager" : "lazy"}
+              />
             </div>
+          ))}
+        </div>
+
+        {/* Visual Progress Indicators (Dots) */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          {bannerImages.map((_, index) => (
+            <div 
+              key={index} 
+              className={`h-1.5 rounded-full transition-all duration-300 ${currentImage === index ? "w-6 bg-white" : "w-1.5 bg-white/50"}`}
+            />
           ))}
         </div>
       </div>
