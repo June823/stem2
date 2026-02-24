@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import Logo from "./Logo";
-import { FaRegCircleUser, FaSearch, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
+import { FaSearch, FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
+import { FaRegCircleUser } from "react-icons/fa6"; // ✅ Moved to fa6
 import getImageUrl from "../helpers/getImageUrl";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SummaryApi from "../common";
