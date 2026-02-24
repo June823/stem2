@@ -18,14 +18,14 @@ const VerticalCardProduct = ({ category, heading }) => {
   const scrollElement = useRef()
 
   const { fetchUserAddToCart, user } = useContext(Context)
+  
+  // ✅ Robust currency formatter
   const displayKSh = (num) => `KSh ${Number(num || 0).toLocaleString()}`
 
   const fetchData = async () => {
     setLoading(true)
     const categoryProduct = await fetchCategoryWiseProduct(category)
     setLoading(false)
-    
-    // ✅ FIX: Only show products that are NOT deleted
     const activeProducts = (categoryProduct?.data || []).filter(p => !p.deleted)
     setData(activeProducts)
   }
@@ -33,8 +33,7 @@ const VerticalCardProduct = ({ category, heading }) => {
   useEffect(() => { fetchData() }, [category])
 
   const handleDeleteProduct = async (e, id) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault(); e.stopPropagation();
     if (window.confirm("Move this product to trash?")) {
       const response = await fetch(SummaryApi.deleteProduct.url, {
         method: SummaryApi.deleteProduct.method,
@@ -43,13 +42,9 @@ const VerticalCardProduct = ({ category, heading }) => {
         body: JSON.stringify({ productId: id }) 
       })
       const dataResponse = await response.json()
-
       if (dataResponse.success) {
         toast.success(dataResponse.message)
-        // ✅ INSTANT UI UPDATE: Remove from screen immediately
         setData((prev) => prev.filter(item => item._id !== id))
-      } else {
-        toast.error(dataResponse.message)
       }
     }
   }
@@ -77,16 +72,19 @@ const VerticalCardProduct = ({ category, heading }) => {
             )}
             <Link to={"/product/" + product?._id} className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] bg-white rounded-sm shadow block'>
               <div className='bg-slate-200 h-48 p-4 flex justify-center items-center'>
-                <img src={getImageUrl(product?.productImage?.[0])} className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply' alt="" />
+                {/* ✅ Image Fix applied here */}
+                <img src={getImageUrl(product?.productImage)} className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply' alt={product?.productName} />
               </div>
               <div className='p-4 grid gap-3'>
-                <h2 className='font-medium text-base md:text-lg text-black'>{product?.productName}</h2>
+                <h2 className='font-medium text-base md:text-lg text-black truncate'>{product?.productName}</h2>
                 <p className='capitalize text-slate-500'>{product?.category}</p>
                 <div className='flex gap-3'>
-                  <p className='text-red-600 font-medium'>{displayKSh(product?.sellingPrice || product?.price)}</p>
-                  {product?.sellingPrice && <p className='text-slate-500 line-through'>{displayKSh(product?.price)}</p>}
+                  {/* ✅ Single Clean KSh Price */}
+                  <p className='text-red-600 font-bold text-lg'>
+                    {displayKSh(product?.sellingPrice || product?.price)}
+                  </p>
                 </div>
-                <button className='text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-0.5 rounded-full' onClick={(e) => { e.preventDefault(); addToCart(e, product?._id); fetchUserAddToCart(); }}>Add to Cart</button>
+                <button className='text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-full' onClick={(e) => { e.preventDefault(); addToCart(e, product?._id); fetchUserAddToCart(); }}>Add to Cart</button>
               </div>
             </Link>
           </div>
