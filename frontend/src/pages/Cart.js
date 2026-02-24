@@ -90,3 +90,13 @@ const Cart = () => {
         </div>
     )
 }
+
+
+    return (
+        <div className='container mx-auto p-4'>
+            {/* ... your JSX ... */}
+        </div>
+    )
+}
+
+export default Cart; // <--- Ensure this is exactly like this
