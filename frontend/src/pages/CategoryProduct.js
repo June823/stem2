@@ -18,15 +18,12 @@ const CategoryProduct = () => {
 
   const fetchData = async (categories) => {
     if (!categories || categories.length === 0) {
-      console.log('⚠️ No categories provided, skipping fetch');
       setData([]);
       return;
     }
 
     try {
       setLoading(true);
-      console.log('🔍 Fetching products for categories:', categories);
-      
       const response = await fetch(SummaryApi.filterProduct.url, {
         method: SummaryApi.filterProduct.method,
         headers: { 'Content-Type': 'application/json' },
@@ -38,13 +35,12 @@ const CategoryProduct = () => {
       }
 
       const dataResponse = await response.json();
-      console.log('📦 Filter response:', dataResponse);
-      console.log('✅ Products received:', dataResponse?.data?.length || 0);
       
       if (dataResponse?.data && Array.isArray(dataResponse.data)) {
-        setData(dataResponse.data);
+        // ✅ FIX: Only show products that ARE NOT deleted
+        const activeProducts = dataResponse.data.filter(p => !p.deleted);
+        setData(activeProducts);
       } else {
-        console.warn('⚠️ Unexpected response format:', dataResponse);
         setData([]);
       }
     } catch (error) {
@@ -55,18 +51,13 @@ const CategoryProduct = () => {
     }
   };
 
-  // Initialize category from URL on mount and when URL changes
   useEffect(() => {
     if (urlCategoryListinArray.length > 0) {
       const urlCategoryListObject = {};
-      console.log('🔗 URL categories from query:', urlCategoryListinArray);
       urlCategoryListinArray.forEach(el => {
         urlCategoryListObject[el] = true;
       });
-      console.log('✅ Setting selected categories from URL:', urlCategoryListObject);
       setSelectCategory(urlCategoryListObject);
-      // Immediately fetch products for URL categories
-      console.log('🚀 Fetching products for URL categories:', urlCategoryListinArray);
       fetchData(urlCategoryListinArray);
     }
   }, [location.search]);
@@ -79,19 +70,13 @@ const CategoryProduct = () => {
     }));
   };
 
-  // Update filterCategoryList when selectCategory changes
   useEffect(() => {
     const arrayOfCategory = Object.keys(selectCategory)
       .filter(key => selectCategory[key]);
-    console.log('📋 Selected categories:', arrayOfCategory);
     
     if (arrayOfCategory.length > 0) {
       setFilterCategoryList(arrayOfCategory);
-      
-      // Update URL without triggering navigation
-      const urlFormat = arrayOfCategory
-        .map((el) => `category=${el}`)
-        .join('&');
+      const urlFormat = arrayOfCategory.map((el) => `category=${el}`).join('&');
       const newUrl = `/product-category?${urlFormat}`;
       if (location.pathname + location.search !== newUrl) {
         navigate(newUrl, { replace: true });
@@ -101,37 +86,37 @@ const CategoryProduct = () => {
     }
   }, [selectCategory]);
 
-  // Fetch data when filterCategoryList changes (but not from URL initialization)
   useEffect(() => {
     if (filterCategoryList.length > 0) {
-      // Only fetch if this is a user-initiated change (not from URL)
       const urlCategories = urlSearch.getAll('category');
       const isUrlMatch = filterCategoryList.length === urlCategories.length && 
                          filterCategoryList.every(cat => urlCategories.includes(cat));
       
       if (!isUrlMatch || data.length === 0) {
-        console.log('🔄 filterCategoryList changed, fetching:', filterCategoryList);
         fetchData(filterCategoryList);
       }
     }
   }, [filterCategoryList]);
 
+  // ✅ IMPROVED SORTING: Uses fallback price so sorting is accurate
   const handleOnChangeSortBy = (e) => {
     const { value } = e.target;
     setSortBy(value);
 
-    if (value === 'asc') {
-      setData(prev => [...prev].sort((a, b) => (a.sellingPrice || a.price || 0) - (b.sellingPrice || b.price || 0)));
-    }
+    setData(prev => [...prev].sort((a, b) => {
+      const priceA = a?.sellingPrice > 0 ? a.sellingPrice : (a?.price || 0);
+      const priceB = b?.sellingPrice > 0 ? b.sellingPrice : (b?.price || 0);
 
-    if (value === 'dsc') {
-      setData(prev => [...prev].sort((a, b) => (b.sellingPrice || b.price || 0) - (a.sellingPrice || a.price || 0)));
-    }
+      if (value === 'asc') return priceA - priceB;
+      if (value === 'dsc') return priceB - priceA;
+      return 0;
+    }));
   };
 
   return (
     <div className='container mx-auto p-4'>
       <div className='hidden lg:grid grid-cols-[200px,1fr]'>
+        {/* Sidebar */}
         <div className='bg-white p-2 min-h-[calc(100vh-120px)] overflow-y-scroll'>
           <div>
             <h3 className='text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300'>Sort by</h3>
@@ -147,7 +132,7 @@ const CategoryProduct = () => {
             </form>
           </div>
 
-          <div>
+          <div className='mt-4'>
             <h3 className='text-base uppercase font-medium text-slate-500 border-b pb-1 border-slate-300'>Category</h3>
             <form className='text-sm flex flex-col gap-2 py-2'>
               {productCategory.map((categoryName, index) => (
@@ -167,16 +152,17 @@ const CategoryProduct = () => {
           </div>
         </div>
 
+        {/* Main Content */}
         <div className='px-4'>
           <p className='font-medium text-slate-800 text-lg my-2'>
             Search Results : {data.length}
           </p>
 
-          <div className='min-h-[calc(100vh-120px)] overflow-y-scroll max-h-[calc(100vh-120px)]'>
+          <div className='min-h-[calc(100vh-120px)] overflow-y-scroll max-h-[calc(100vh-120px)] scrollbar-none'>
             {data.length > 0 && !loading ? (
               <VerticalCard data={data} loading={loading} />
             ) : (
-              <p className='text-slate-500'>No products found.</p>
+              !loading && <p className='text-slate-500 text-center mt-10'>No products found in this category.</p>
             )}
           </div>
         </div>
