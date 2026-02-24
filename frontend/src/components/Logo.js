@@ -3,7 +3,7 @@ import React from 'react';
 const Logo = ({ w, h }) => {
   return (
     <img
-      src="/stem.png"
+      src="/stem.jpg"
       alt="Logo"
       style={{
         width: w ? w : '100%',   // use prop if provided, else full width
