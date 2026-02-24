@@ -18,21 +18,18 @@ const HorizontalCardProduct = ({ category, heading }) => {
   const scrollElement = useRef()
   const { fetchUserAddToCart, user } = useContext(Context)
 
-  // ✅ LOCALIZED CURRENCY
   const displayKSh = (num) => `KSh ${Number(num || 0).toLocaleString()}`
 
   const fetchData = async () => {
     setLoading(true)
     const categoryProduct = await fetchCategoryWiseProduct(category)
     setLoading(false)
-    // ✅ Filter out soft-deleted products
     const activeProducts = (categoryProduct?.data || []).filter(p => !p.deleted)
     setData(activeProducts)
   }
 
   useEffect(() => { fetchData() }, [category])
 
-  // ✅ ADMIN DELETE LOGIC
   const handleDeleteProduct = async (e, id) => {
     e.preventDefault(); e.stopPropagation();
     if (window.confirm("Move this product to trash?")) {
@@ -62,7 +59,6 @@ const HorizontalCardProduct = ({ category, heading }) => {
 
         {!loading && data.map((product) => (
           <div key={product?._id} className='relative group'>
-            {/* ✅ ADMIN OVERLAY */}
             {(user?.role === "ADMIN" || user?.role === "ADMINISTRATOR") && (
               <div className='absolute top-2 right-2 flex gap-2 z-30 opacity-0 group-hover:opacity-100 transition-opacity'>
                 <div className='bg-green-600 text-white p-1.5 rounded-full cursor-pointer shadow-md' onClick={(e) => {
@@ -75,16 +71,19 @@ const HorizontalCardProduct = ({ category, heading }) => {
 
             <Link to={"/product/" + product?._id} className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] h-36 bg-white rounded-sm shadow flex'>
               <div className='bg-slate-200 h-full p-2 min-w-[120px] md:min-w-[145px] flex justify-center items-center'>
-                <img src={getImageUrl(product?.productImage?.[0])} className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply' alt={product.productName}/>
+                {/* ✅ Image Fix applied here */}
+                <img src={getImageUrl(product?.productImage)} className='object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply' alt={product.productName}/>
               </div>
               <div className='p-4 grid w-full'>
                 <h2 className='font-medium text-base text-black line-clamp-1'>{product?.productName}</h2>
                 <p className='capitalize text-slate-500 text-xs'>{product?.category}</p>
-                <div className='flex gap-2 items-center'>
-                  <p className='text-red-600 font-medium'>{displayKSh(product?.sellingPrice || product?.price)}</p>
-                  {product?.sellingPrice && <p className='text-slate-500 line-through text-[10px]'>{displayKSh(product?.price)}</p>}
+                <div className='flex items-center mt-1'>
+                  {/* ✅ Clean Price logic applied */}
+                  <p className='text-red-600 font-bold'>
+                    {displayKSh(product?.sellingPrice || product?.price)}
+                  </p>
                 </div>
-                <button className='text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full' onClick={(e) => { e.preventDefault(); addToCart(e, product?._id); fetchUserAddToCart(); }}>Add to Cart</button>
+                <button className='text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full mt-2 self-start' onClick={(e) => { e.preventDefault(); addToCart(e, product?._id); fetchUserAddToCart(); }}>Add to Cart</button>
               </div>
             </Link>
           </div>
