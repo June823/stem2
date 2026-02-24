@@ -16,35 +16,43 @@ const Cart = () => {
 
     const fetchData = async () => {
         try {
-            setLoading(true)
-            const token = localStorage.getItem('token')
-            
+            setLoading(true);
+            const token = localStorage.getItem('token'); 
+
             if (!token) {
-                setData([])
-                setHasFetched(true)
-                return
+                setData([]);
+                setHasFetched(true);
+                return;
             }
 
             const response = await fetch(SummaryApi.addToCartProductView.url, {
                 method: SummaryApi.addToCartProductView.method,
                 headers: {
-                    "content-type": 'application/json',
-                    "Authorization": `Bearer ${token}`
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
                 }
-            })
+            });
 
-            const responseData = await response.json()
+            const responseData = await response.json();
+
+            // Handle session expiration
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                setData([]);
+                return;
+            }
+
             if (responseData.success) {
-                const validData = (responseData.data || []).filter(item => item.productId !== null)
-                setData(validData)
+                const validData = (responseData.data || []).filter(item => item.productId !== null);
+                setData(validData);
             }
         } catch (error) {
-            console.error("Cart Error:", error)
+            console.error("Fetch Error:", error);
         } finally {
-            setLoading(false)
-            setHasFetched(true)
+            setLoading(false);
+            setHasFetched(true);
         }
-    }
+    };
 
     useEffect(() => {
         fetchData()
