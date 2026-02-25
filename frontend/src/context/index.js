@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback } from "react";
+import React, { createContext, useState } from "react";
 import SummaryApi from "../common";
 
 const Context = createContext(null);
@@ -7,11 +7,15 @@ export const ContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [cartProductCount, setCartProductCount] = useState(0);
 
-  // ✅ IMPROVED: Added 'return' so Login page can wait for this to finish
   const fetchUserDetails = async () => {
     try {
+      const token = localStorage.getItem('token'); // 🔑 Get the token
+
       const response = await fetch(SummaryApi.userDetails.url, {
         method: SummaryApi.userDetails.method,
+        headers: {
+          "Authorization": `Bearer ${token}` // 🔑 Send the token
+        },
         credentials: "include",
       });
 
@@ -19,7 +23,7 @@ export const ContextProvider = ({ children }) => {
 
       if (dataResponse.success) {
         setUser(dataResponse.data);
-        return dataResponse; // Return data so caller knows it worked
+        return dataResponse;
       } else {
         setUser(null);
         return dataResponse;
@@ -32,8 +36,13 @@ export const ContextProvider = ({ children }) => {
 
   const fetchUserAddToCart = async () => {
     try {
+      const token = localStorage.getItem('token'); // 🔑 Get the token
+
       const response = await fetch(SummaryApi.addToCartProductCount.url, {
         method: SummaryApi.addToCartProductCount.method,
+        headers: {
+          "Authorization": `Bearer ${token}` // 🔑 Send the token
+        },
         credentials: "include",
       });
 
