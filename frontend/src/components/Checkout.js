@@ -7,30 +7,38 @@ function Checkout({ cartItems }) {
     const { user } = useContext(Context);
 
     const handleCheckout = async () => {
-        if (!user?._id) {
+        const token = localStorage.getItem('token');
+
+        // Check both Context and LocalStorage to be safe
+        if (!user?._id && !token) {
             toast.error("Please login to proceed to checkout");
             return;
         }
 
         try {
-            // ✅ We call the URL from SummaryApi
             const response = await fetch(SummaryApi.payment.url, {
                 method: SummaryApi.payment.method,
-                headers: { 'Content-Type': 'application/json' },
-                credentials: "include", 
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // 🔑 Added this!
+                },
+                // credentials: "include", // Only keep this if using Cookies
                 body: JSON.stringify({ 
                     products: cartItems.map(item => ({
-                        productName: item.productId?.productName || item.productName || "Product",
-                        price: Number(item.productId?.price || item.price) || 0,
-                        quantity: item.quantity || 1
+                        productName: item.productId?.productName || "Product",
+                        // 🔑 Ensure this matches your DB field (sellingPrice vs price)
+                        price: Number(item.productId?.sellingPrice || item.productId?.price || 0),
+                        quantity: item.quantity || 1,
+                        image: item.productId?.productImage?.[0]
                     }))
                 }),
             });
 
-            // ✅ Check if response is actually JSON before parsing
             const contentType = response.headers.get("content-type");
             if (!contentType || !contentType.includes("application/json")) {
-                throw new Error("Server sent a non-JSON response. Check your Backend Route URL.");
+                const text = await response.text(); // Get raw error if not JSON
+                console.error("Server Response:", text);
+                throw new Error("Server sent a non-JSON response. Check your Backend Route.");
             }
 
             const data = await response.json();
@@ -46,7 +54,7 @@ function Checkout({ cartItems }) {
     };
 
     return (
-        <button onClick={handleCheckout} className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition'>
+        <button onClick={handleCheckout} className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition font-bold'>
             Pay with Stripe
         </button>
     );
