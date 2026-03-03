@@ -9,24 +9,26 @@ function Checkout({ cartItems }) {
     const handleCheckout = async () => {
         const token = localStorage.getItem('token');
 
-        // Check both Context and LocalStorage to be safe
+        // FIX: Check both context AND localStorage token
         if (!user?._id && !token) {
             toast.error("Please login to proceed to checkout");
             return;
         }
 
         try {
+            toast.info("Preparing checkout...");
+
             const response = await fetch(SummaryApi.payment.url, {
                 method: SummaryApi.payment.method,
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // 🔑 Added this!
+                    // This tells the backend WHO you are
+                    'Authorization': `Bearer ${token}` 
                 },
-                // credentials: "include", // Only keep this if using Cookies
                 body: JSON.stringify({ 
                     products: cartItems.map(item => ({
-                        productName: item.productId?.productName || "Product",
-                        // 🔑 Ensure this matches your DB field (sellingPrice vs price)
+                        productName: item.productId?.productName,
+                        // Using the price logic that fixed your Cart display
                         price: Number(item.productId?.sellingPrice || item.productId?.price || 0),
                         quantity: item.quantity || 1,
                         image: item.productId?.productImage?.[0]
@@ -34,27 +36,30 @@ function Checkout({ cartItems }) {
                 }),
             });
 
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                const text = await response.text(); // Get raw error if not JSON
-                console.error("Server Response:", text);
-                throw new Error("Server sent a non-JSON response. Check your Backend Route.");
+            // Handle potential backend errors (like 401 Unauthorized)
+            if (response.status === 401 || response.status === 403) {
+                toast.error("Session expired. Please login again.");
+                return;
             }
 
             const data = await response.json();
-            if (data.url) {
+
+            if (data.success && data.url) {
                 window.location.href = data.url; 
             } else {
                 toast.error(data.message || 'Payment session failed');
             }
         } catch (err) {
             console.error('Checkout error:', err);
-            toast.error(`Checkout failed: ${err.message}`);
+            toast.error("Checkout failed. Please check your internet connection.");
         }
     };
 
     return (
-        <button onClick={handleCheckout} className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition font-bold'>
+        <button 
+            onClick={handleCheckout} 
+            className='bg-blue-600 text-white w-full p-2 mt-2 rounded hover:bg-blue-700 transition font-bold'
+        >
             Pay with Stripe
         </button>
     );
