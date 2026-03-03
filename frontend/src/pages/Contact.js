@@ -8,8 +8,8 @@ const Contact = () => {
           <h2 className='text-3xl font-bold text-red-600 mb-4'>Get In Touch</h2>
           <p className='text-slate-600 mb-6'>Have questions about our baskets or your order? Send us a message and we will respond within 24 hours.</p>
           <div className='space-y-4 text-slate-700'>
-            <p><strong>Email:</strong> support@stem2.co.ke</p>
-            <p><strong>Phone:</strong> +254 700 000 000</p>
+            <p><strong>Email:</strong> idahjunecherotich@gmail.com</p>
+            <p><strong>Phone:</strong> +254 740117880</p>
             <p><strong>Address:</strong> Kabarak University, Nakuru-Eldama Ravine Rd.</p>
           </div>
         </div>
