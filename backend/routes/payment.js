@@ -45,8 +45,8 @@ router.post('/create-checkout-session', authToken, async (req, res) => {
       line_items: lineItems,
       // Pass the user ID to help you track orders in the dashboard
       client_reference_id: req.userId, 
-      success_url: `${process.env.FRONTEND_URL || 'https://stem2-12.onrender.com'}/success`,
-      cancel_url: `${process.env.FRONTEND_URL || 'https://stem2-12.onrender.com'}/cart`,
+      success_url: `https://stem2-12.onrender.com/success`,
+      cancel_url: `https://stem2-12.onrender.com/cart`,
     });
 
     res.json({ 
