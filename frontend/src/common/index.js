@@ -1,4 +1,5 @@
-const backendDomain = process.env.REACT_APP_API_URL || "https://stem2-11.onrender.com";
+// 🔑 FIXED: Changed stem2-11 to stem2-12 to match your live Render service
+const backendDomain = process.env.REACT_APP_API_URL || "https://stem2-12.onrender.com";
 
 const SummaryApi = {
     // Authentication
